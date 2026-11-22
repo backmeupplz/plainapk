@@ -108,6 +108,8 @@ object Work {
             val rel = Forge.latest(t.repo, kind, t.prerelease)
             t.latestTag = rel.tag
             t.error = null
+            // Already running this release (installed elsewhere, or before we tracked it): nothing to download
+            if (t.handledTag == null && installed(t.pkg)?.versionName?.removePrefix("v") == rel.tag.removePrefix("v")) t.handledTag = rel.tag
             if (install && t.handledTag != rel.tag && (force || t.pendingTag != rel.tag)) update(t, rel)
         } catch (e: Exception) {
             t.error = e.message ?: e.javaClass.simpleName
