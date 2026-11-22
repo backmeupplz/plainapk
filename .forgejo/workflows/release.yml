@@ -1,0 +1,59 @@
+# Publishing a release vX.Y.Z on git.borodutch.com (tea release create --repo backmeupplz/plainapk --tag vX.Y.Z) builds the
+# signed APK and attaches it as plainapk-X.Y.Z.apk and plainapk.apk to that release and to the same release on the GitHub
+# mirror, which is where the app updates itself from (github.com/backmeupplz/plainapk/releases/latest/download/plainapk.apk).
+# versionCode is the build time in minutes since 1970, so every release counts up without anyone bumping it.
+# Secrets: KEYSTORE_PROPERTIES, RELEASE_JKS (base64), GH_MIRROR_TOKEN. Backup: Vaultwarden "Plain APK: Android release keystore".
+name: Release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: write
+concurrency:
+  group: release
+  cancel-in-progress: false
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TAG: ${{ github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Restore the release key
+        env:
+          KEYSTORE_PROPERTIES: ${{ secrets.KEYSTORE_PROPERTIES }}
+          RELEASE_JKS: ${{ secrets.RELEASE_JKS }}
+        run: |
+          [ -n "$RELEASE_JKS" ] || { echo "::error::No RELEASE_JKS secret"; exit 1; }
+          printf '%s' "$KEYSTORE_PROPERTIES" > keystore.properties
+          printf '%s' "$RELEASE_JKS" | base64 -d > plainapk.jks
+      - name: Build
+        run: |
+          export VERSION_NAME="${TAG#v}" VERSION_CODE=$(( $(date +%s) / 60 ))
+          ./gradlew testDebugUnitTest assembleRelease
+          apk=app/build/outputs/apk/release/app-release.apk
+          # Never ship an APK signed with anything but the release key
+          signer=$("$ANDROID_HOME"/build-tools/*/apksigner verify --print-certs "$apk" | sed -n 's/.*SHA-256 digest: //p' | head -1)
+          [ "$signer" = 88b492ac67bb102e14861884fa0fc683edda0c4efe56acc6e4d14570e07327e1 ] || { echo "::error::Wrong signer $signer"; exit 1; }
+          cp "$apk" "plainapk-$VERSION_NAME.apk"
+          cp "$apk" plainapk.apk
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+      - name: Attach to both releases
+        env:
+          FORGEJO_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
+          RELEASE_TITLE: ${{ github.event.release.name }}
+          RELEASE_NOTES: ${{ github.event.release.body }}
+          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: .github/scripts/attach.sh "$TAG" "plainapk-$VERSION_NAME.apk" plainapk.apk

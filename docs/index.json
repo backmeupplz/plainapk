@@ -1,0 +1,337 @@
+{
+ "version": 1,
+ "apps": [
+  {
+   "id": "com.borodutch.absplus",
+   "name": "ABS+",
+   "repo": "https://github.com/backmeupplz/absplus",
+   "summary": "A small, fast and ad-free Audiobookshelf client for iPhone and Android that streams and downloads audiobooks and podcasts from your own server",
+   "signer": "88f9e79981664bf83e06ecdae5a6f330588357d62bd787295d2498bb359308e4"
+  },
+  {
+   "id": "com.beemdevelopment.aegis",
+   "name": "Aegis",
+   "repo": "https://github.com/beemdevelopment/Aegis",
+   "summary": "A free, secure and open source app for Android to manage your 2-step verification tokens.",
+   "signer": "c6db80a8e14e5230c1de8415ef820d13dc901d8fe33cf3acb57b6862d858a823"
+  },
+  {
+   "id": "com.ichi2.anki",
+   "name": "AnkiDroid",
+   "repo": "https://github.com/ankidroid/Anki-Android",
+   "summary": "AnkiDroid: Anki flashcards on Android. Your secret trick to achieve superhuman information retention.",
+   "signer": "2071534f0f4b5e54ae952dd275d70da6e3459ee69909d2ab1b4843c4c5b21a45"
+  },
+  {
+   "id": "com.x8bit.bitwarden",
+   "name": "Bitwarden",
+   "repo": "https://github.com/bitwarden/android",
+   "summary": "Bitwarden mobile apps (Password Manager and Authenticator) for Android.",
+   "signer": "24e06c04c208048f19f1c993b4dda4430ea8b06db8375ea0e37b834696b9ac3a",
+   "asset": "com.x8bit.bitwarden*"
+  },
+  {
+   "id": "org.breezyweather",
+   "name": "Breezy Weather",
+   "repo": "https://github.com/breezy-weather/breezy-weather",
+   "summary": "A feature-rich weather app with good visualizations and more than 50 sources.",
+   "signer": "29d435f70aa9aec3c1faff7f7ffa6e15785088d87f06ecfcab9c3cc62dc269d8"
+  },
+  {
+   "id": "com.darkempire78.opencalculator",
+   "name": "Calculator",
+   "repo": "https://github.com/Darkempire78/OpenCalc",
+   "summary": "A simple and beautiful calculator for Android downloaded more than 300k times",
+   "signer": "21050fd6d36798d9758b6ca5202aeb50a5bbbdc756141d94e36f6c8c168c0959"
+  },
+  {
+   "id": "org.fossify.calendar",
+   "name": "Calendar",
+   "repo": "https://github.com/FossifyOrg/Calendar",
+   "summary": "A simple calendar with events, customizable widgets and no ads.",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "org.fossify.clock",
+   "name": "Clock",
+   "repo": "https://github.com/FossifyOrg/Clock",
+   "summary": "Combination of a beautiful clock with widget, alarm, stopwatch & timer, no ads",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "com.bnyro.clock",
+   "name": "Clock You",
+   "repo": "https://github.com/you-apps/ClockYou",
+   "summary": "Privacy focused clock app built with MD3",
+   "signer": "b3bc73b117df5dfe38130c6c2b946852ae7088557fe8e433f0d9983a6b55cc95"
+  },
+  {
+   "id": "org.fossify.contacts",
+   "name": "Contacts",
+   "repo": "https://github.com/FossifyOrg/Contacts",
+   "summary": "Easy and quick contact management with no ads, handles groups and favorites too.",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "org.cromite.cromite",
+   "name": "Cromite",
+   "repo": "https://github.com/uazo/cromite",
+   "summary": "Cromite a Bromite fork with ad blocking and privacy enhancements; take back your browser!",
+   "signer": "633fa41d8211d6d0916a819b89668c6de92e64232da67f9d16fd81c3b7e923ff"
+  },
+  {
+   "id": "com.looker.droidify",
+   "name": "Droid-ify",
+   "repo": "https://github.com/Droid-ify/client",
+   "summary": "Clutterfree F-Droid client, [mirror] https://codeberg.org/droidify/client",
+   "signer": "ed8859c55af311162658b94af982b9f091dcd27628d4de3486d1217ebf3c9935"
+  },
+  {
+   "id": "com.kin.easynotes",
+   "name": "Easy Notes",
+   "repo": "https://github.com/Kin69/EasyNotes",
+   "summary": "EasyNotes: Jetpack Compose MVVM for seamless note-taking. Effortless creation, editing, and organization.",
+   "signer": "fce87da97f791301df390bfa47e81685191167cab5dbd555db8287541f786e28"
+  },
+  {
+   "id": "io.element.android.x",
+   "name": "Element X",
+   "repo": "https://github.com/element-hq/element-x-android",
+   "summary": "Android Matrix messenger application using the Matrix Rust Sdk and Jetpack Compose",
+   "signer": "c6db9b9c8cbdd65d16e8ec8c8b91c831b9efc95cbf98ae41f6a9d835151a7e16"
+  },
+  {
+   "id": "org.fossify.filemanager",
+   "name": "File Manager",
+   "repo": "https://github.com/FossifyOrg/File-Manager",
+   "summary": "Easy app for managing your files without ads, respecting your privacy & security",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "nodomain.freeyourgadget.gadgetbridge",
+   "name": "Gadgetbridge",
+   "repo": "https://codeberg.org/Freeyourgadget/Gadgetbridge",
+   "summary": "A free and cloudless replacement for your gadget vendors' closed source Android applications. See the list for supported devices.",
+   "signer": "01cce9316fcb77ea02c6dea81fde9f3176469202c0cea0514c0e03cb969bc7be"
+  },
+  {
+   "id": "org.fossify.gallery",
+   "name": "Gallery",
+   "repo": "https://github.com/FossifyOrg/Gallery",
+   "summary": "Browse your memories without any interruptions with this photo and video gallery",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "io.homeassistant.companion.android",
+   "name": "Home Assistant",
+   "repo": "https://github.com/home-assistant/android",
+   "summary": "Home Assistant Companion for Android",
+   "signer": "11194ba809b42ddf0e1a7dec6842a59c7ff1119c5482e95febffd5c6014daa5a",
+   "asset": "*full*"
+  },
+  {
+   "id": "dev.zwander.installwithoptions",
+   "name": "Install with Options",
+   "repo": "https://github.com/zacharee/InstallWithOptions",
+   "summary": "Simple-ish app using Shizuku to install APKs on-device with advanced options",
+   "signer": "e6565e92740a44d5550a03dc34f1b2a736f8b13f60a2a5f29f1fb9364b6fc56e"
+  },
+  {
+   "id": "org.ironfoxoss.ironfox",
+   "name": "IronFox",
+   "repo": "https://gitlab.com/ironfox-oss/IronFox",
+   "summary": "Private, secure, user first web browser for Android. https://ironfoxoss.org/",
+   "signer": "c5e291b5a571f9c8cd9a9799c2c94e02ec9703948893f2ca756d67b94204f904"
+  },
+  {
+   "id": "com.kunzisoft.keepass.libre",
+   "name": "KeePassDX",
+   "repo": "https://github.com/Kunzisoft/KeePassDX",
+   "summary": "Lightweight vault and password manager for Android, KeePassDX allows editing encrypted data in a single file in KeePass format and fill in the forms in a secure way.",
+   "signer": "7d55b8af210381aabf960f07e17cf7857b6d2a642ca2da6bf0bdf1b200362f04",
+   "asset": "*libre*"
+  },
+  {
+   "id": "org.fossify.keyboard",
+   "name": "Keyboard",
+   "repo": "https://github.com/FossifyOrg/Keyboard",
+   "summary": "Easy keyboard for inserting all kinds of texts, special characters and numbers.",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "com.artemchep.keyguard",
+   "name": "Keyguard",
+   "repo": "https://github.com/AChep/keyguard-app",
+   "summary": "A password manager that supports Bitwarden platform and KeePass (KDBX) files. It autofills your logins, supports passkeys, works offline, and runs a Watchtower that finds leaked and reused passwords and other issues.",
+   "signer": "14f47c2e6b9f00f13e8300f20ae99d4776473f27ee811962d0fa74980f4f5c72"
+  },
+  {
+   "id": "ch.deletescape.lawnchair",
+   "name": "Lawnchair",
+   "repo": "https://github.com/LawnchairLauncher/lawnchair",
+   "summary": "No clever tagline needed.",
+   "signer": "47ac92631c603513cc8d26dd9cffe0719a8b365544dccec2095824ec256120a7"
+  },
+  {
+   "id": "org.proninyaroslav.libretorrent",
+   "name": "LibreTorrent",
+   "repo": "https://github.com/proninyaroslav/libretorrent",
+   "summary": "Free and Open Source, full-featured torrent client for Android. Mirrored from https://gitlab.com/proninyaroslav/libretorrent",
+   "signer": "b088d472a98018645cdeef8e93338d58b3f23892187fdf63f73958381e27e583"
+  },
+  {
+   "id": "com.github.libretube",
+   "name": "LibreTube",
+   "repo": "https://github.com/libre-tube/LibreTube",
+   "summary": "An alternative frontend for YouTube, for Android.",
+   "signer": "720c4fcecf738a41d033b9fbe0bef97ac232030ce93e274d2e0ae232e44eeace"
+  },
+  {
+   "id": "com.m3u.smartphone",
+   "name": "M3U",
+   "repo": "https://github.com/oxyroid/M3UAndroid",
+   "summary": "a clean, practical, ad-free IPTV app",
+   "signer": "49545adef6b5b670f35249e02ead730971f2f8b4b9fedde1f8faf6b499edd747"
+  },
+  {
+   "id": "com.futsch1.medtimer",
+   "name": "MedTimer",
+   "repo": "https://github.com/Futsch1/medTimer",
+   "summary": "MedTimer Android app",
+   "signer": "69bc7c72e499045b44c87fc8463f599472deb408c48de38de8554ae7754b9d84"
+  },
+  {
+   "id": "com.borodutch.meshplus",
+   "name": "Mesh+",
+   "repo": "https://github.com/backmeupplz/meshtastic-plus",
+   "summary": "Mesh+ is a small, open-source Android and iPhone app for Meshtastic radios and an independent alternative to the official app, with private rooms, encrypted DMs, an SMS relay and firmware updates for nRF52 radios",
+   "signer": "9216a9c3839474e6d9702f93baa0f4b7c26be5f606606c32d806f23ce91977a8"
+  },
+  {
+   "id": "org.fossify.messages",
+   "name": "Messages",
+   "repo": "https://github.com/FossifyOrg/Messages",
+   "summary": "An easy and quick way of managing SMS and MMS messages without ads.",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "app.mihon",
+   "name": "Mihon",
+   "repo": "https://github.com/mihonapp/mihon",
+   "summary": "Free and open source manga reader for Android",
+   "signer": "9add655a78e96c4ec7a53ef89dccb557cb5d767489fac5e785d671a5a75d4da2"
+  },
+  {
+   "id": "org.schabi.newpipe",
+   "name": "NewPipe",
+   "repo": "https://github.com/TeamNewPipe/NewPipe",
+   "summary": "A libre lightweight streaming front-end for Android.",
+   "signer": "cb84069bd68116bafae5ee4ee5b08a567aa6d898404e7cb12f9e756df5cf5cab"
+  },
+  {
+   "id": "com.nextcloud.client",
+   "name": "Nextcloud",
+   "repo": "https://github.com/nextcloud/android",
+   "summary": "📱 Nextcloud Android app",
+   "signer": "fb009522f65e25802261b67b10a45fd70e610031976f40b28a649e152ded0373"
+  },
+  {
+   "id": "com.philkes.notallyx",
+   "name": "NotallyX",
+   "repo": "https://github.com/PhilKes/NotallyX",
+   "summary": "Minimalistic Android note taking App | Notally, but eXtended.",
+   "signer": "d214b6057b79f82509ddcd1e351965b3c6ecc4b2a3896e5cdf885a70a0b61dfd"
+  },
+  {
+   "id": "org.fossify.notes",
+   "name": "Notes",
+   "repo": "https://github.com/FossifyOrg/Notes",
+   "summary": "A simple text field for adding quick notes without ads.",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "dev.imranr.obtainium",
+   "name": "Obtainium",
+   "repo": "https://github.com/ImranR98/Obtainium",
+   "summary": "Get Android app updates straight from the source.",
+   "signer": "b353601f6a1d5fd6603ae2f50be80cf301367b86b6ab8b1f66243da96cd57362"
+  },
+  {
+   "id": "app.organicmaps.web",
+   "name": "Organic Maps",
+   "repo": "https://github.com/organicmaps/organicmaps",
+   "summary": "🍃 Organic Maps is a free Android & iOS offline maps app for more than 12M travelers, tourists, hikers, and cyclists. It uses crowd-sourced OpenStreetMap data and is developed with love by the community. No ads, no tracking, no data collection, no crapware. Please donate to support the development!",
+   "signer": "b9c7ae79a5a90270df08a132e536b9c666f5bef1f59b304fcecf8687865e4b5b"
+  },
+  {
+   "id": "org.fossify.phone",
+   "name": "Phone",
+   "repo": "https://github.com/FossifyOrg/Phone",
+   "summary": "A handy phone call manager with phonebook, number blocking and multi-SIM support",
+   "signer": "affdb124d3f4720c2f98dbca9eacba0514fba4306e20a2786c861c3c0d6ff292"
+  },
+  {
+   "id": "com.borodutch.plainwallet",
+   "name": "Plain Wallet",
+   "repo": "https://github.com/backmeupplz/plainwallet",
+   "summary": "Minimal open-source EVM wallet for Chrome, Android, iPhone and Mac (with Safari), in about 2,850 lines of TypeScript you can read in an evening",
+   "signer": "1fec2b6339347421b0c564ab19ee66343916f7feb08162c35fc35c9fb59fcb83"
+  },
+  {
+   "id": "com.bnyro.recorder",
+   "name": "Record You",
+   "repo": "https://github.com/you-apps/RecordYou",
+   "summary": "Privacy focused recorder app built with MD3",
+   "signer": "b3bc73b117df5dfe38130c6c2b946852ae7088557fe8e433f0d9983a6b55cc95"
+  },
+  {
+   "id": "com.junkfood.seal",
+   "name": "Seal",
+   "repo": "https://github.com/JunkFood02/Seal",
+   "summary": "🦭 Video/Audio Downloader for Android, based on yt-dlp",
+   "signer": "4493582a4148df38fc269073c8787c31c431ed5b6d62710892a0406ff50c4d67"
+  },
+  {
+   "id": "moe.shizuku.privileged.api",
+   "name": "Shizuku",
+   "repo": "https://github.com/RikkaApps/Shizuku",
+   "summary": "Using system APIs directly with adb/root privileges from normal apps through a Java process started with app_process.",
+   "signer": "268b5590e868fb08bae7e0ac413564cd1ff88f5ccff74af9dbd0dc918e30db30"
+  },
+  {
+   "id": "com.borodutch.spinwell",
+   "name": "Spinwell",
+   "repo": "https://git.borodutch.com/backmeupplz/spinwell",
+   "summary": "Spinwell: a small, fast player for your Navidrome (OpenSubsonic) server, on Android and iPhone",
+   "signer": "0c9ae656a0dcfcb10e844d49aa36a94c9ae4a720c01b4a10cac4412c4e18b4f7"
+  },
+  {
+   "id": "de.westnordost.streetcomplete",
+   "name": "StreetComplete",
+   "repo": "https://github.com/streetcomplete/StreetComplete",
+   "summary": "Easy to use OpenStreetMap editor for Android and iOS",
+   "signer": "995ca1dc02bdb9e3117e297b7791440a2ea1dca5776cb9d56d792692a597c86c"
+  },
+  {
+   "id": "com.github.catfriend1.syncthingfork",
+   "name": "Syncthing-Fork",
+   "repo": "https://github.com/Catfriend1/syncthing-android",
+   "summary": "Syncthing-Fork - A Syncthing Wrapper for Android.",
+   "signer": "d374b8de5057013143c7d1515a015598c2df403be8160cae01a58c227e6e86aa"
+  },
+  {
+   "id": "com.termux",
+   "name": "Termux",
+   "repo": "https://github.com/termux/termux-app",
+   "summary": "Termux - a terminal emulator application for Android OS extendible by variety of packages.",
+   "signer": "b6da01480eefd5fbf2cd3771b8d1021ec791304bdd6c4bf41d3faabad48ee5e1"
+  },
+  {
+   "id": "com.keylesspalace.tusky",
+   "name": "Tusky",
+   "repo": "https://github.com/tuskyapp/Tusky",
+   "summary": "An Android client for the microblogging server Mastodon",
+   "signer": "9510eada78ea6eb0007b8a11888b1fcc3b67a51d31bc32e91f8516e3efe12fae"
+  }
+ ]
+}

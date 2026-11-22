@@ -1,0 +1,49 @@
+# One repository per line, optionally followed by a file name pattern for releases with several APKs.
+# tools/seed.py turns this into docs/index.json. Add an app with a pull request.
+https://github.com/beemdevelopment/Aegis
+https://github.com/TeamNewPipe/NewPipe
+https://github.com/Kunzisoft/KeePassDX *libre*
+https://github.com/mihonapp/mihon
+https://github.com/bitwarden/android com.x8bit.bitwarden*
+https://github.com/organicmaps/organicmaps
+https://github.com/libre-tube/LibreTube
+https://github.com/JunkFood02/Seal
+https://github.com/breezy-weather/breezy-weather
+https://github.com/Catfriend1/syncthing-android
+https://github.com/ImranR98/Obtainium
+https://github.com/termux/termux-app
+https://github.com/FossifyOrg/Gallery
+https://github.com/FossifyOrg/Calendar
+https://github.com/FossifyOrg/Notes
+https://github.com/FossifyOrg/File-Manager
+https://github.com/FossifyOrg/Messages
+https://github.com/FossifyOrg/Phone
+https://github.com/FossifyOrg/Contacts
+https://github.com/FossifyOrg/Clock
+https://github.com/FossifyOrg/Keyboard
+https://github.com/element-hq/element-x-android
+https://github.com/streetcomplete/StreetComplete
+https://github.com/LawnchairLauncher/lawnchair
+https://github.com/Droid-ify/client
+https://github.com/ankidroid/Anki-Android
+https://github.com/nextcloud/android
+https://github.com/home-assistant/android *full*
+https://github.com/tuskyapp/Tusky
+https://github.com/uazo/cromite
+https://github.com/RikkaApps/Shizuku
+https://github.com/zacharee/InstallWithOptions
+https://github.com/Futsch1/medTimer
+https://github.com/oxyroid/M3UAndroid
+https://github.com/proninyaroslav/libretorrent
+https://github.com/PhilKes/NotallyX
+https://github.com/you-apps/ClockYou
+https://github.com/you-apps/RecordYou
+https://github.com/AChep/keyguard-app
+https://github.com/Kin69/EasyNotes
+https://github.com/Darkempire78/OpenCalc
+https://github.com/backmeupplz/plainwallet
+https://github.com/backmeupplz/absplus
+https://github.com/backmeupplz/meshtastic-plus
+https://git.borodutch.com/backmeupplz/spinwell
+https://gitlab.com/ironfox-oss/IronFox
+https://codeberg.org/Freeyourgadget/Gadgetbridge
