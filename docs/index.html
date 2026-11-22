@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plain APK</title>
+<meta name="description" content="A plain Android app store that installs and silently updates apps straight from their GitHub, Forgejo and GitLab releases, with no backend, no account and no trackers.">
+<link rel="canonical" href="https://plainapk.com/">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Plain APK">
+<meta property="og:url" content="https://plainapk.com/">
+<meta property="og:title" content="Plain APK">
+<meta property="og:description" content="Install and silently update Android apps straight from their GitHub, Forgejo and GitLab releases. No backend, no account, no trackers.">
+<meta property="og:image" content="https://plainapk.com/og.png?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Plain APK: apps straight from their releases, updated silently.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plain APK">
+<meta name="twitter:description" content="Install and silently update Android apps straight from their GitHub, Forgejo and GitLab releases. No backend, no account, no trackers.">
+<meta name="twitter:image" content="https://plainapk.com/og.png?v=1">
+<meta name="twitter:image:alt" content="Plain APK: apps straight from their releases, updated silently.">
+<style>
+:root {
+  color-scheme: light dark;
+  --paper: light-dark(#f7f8fa, #151929);
+  --sheet: light-dark(#ffffff, #1c2136);
+  --ink: light-dark(#1b2340, #e6e9f5);
+  --muted: light-dark(#6a7390, #8e97b5);
+  --rule: light-dark(#d5d9e3, #2c3350);
+  --pen: light-dark(#2443c4, #8fa4ff);
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.65 var(--mono); }
+main { max-width: 720px; margin: 0 auto; padding: 56px 16px 72px; }
+header { display: flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+header img { width: 44px; height: 44px; }
+header span { font-weight: 700; font-size: 20px; }
+h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.2; margin: 0 0 20px; }
+h2 { font-size: 18px; margin: 48px 0 12px; }
+p { margin: 0 0 16px; }
+.lead { font-size: 18px; color: var(--muted); }
+.note { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; margin: 32px 0; }
+pre { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; font-size: 14px; }
+code { font-family: var(--mono); }
+a { color: var(--pen); }
+footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<header><img src="/icon.svg" alt=""><span>Plain APK</span></header>
+
+<h1>Apps straight from their releases, updated while you sleep.</h1>
+<p class="lead">Plain APK is a small Android app store that installs apps directly from the developer's GitHub, Forgejo or GitLab releases and keeps them up to date in the background, even when a project ships a new build every hour.</p>
+
+<div class="note">Plain APK is being built in the open right now, so there is nothing to install yet. Follow along on <a href="https://git.borodutch.com/backmeupplz/plainapk">Forgejo</a> or the <a href="https://github.com/backmeupplz/plainapk">GitHub mirror</a>.</div>
+
+<h2>How it works</h2>
+<p>You paste a repository link or pick an app from the catalogue, and Plain APK downloads the APK the developer attached to their latest release. Before installing anything it checks that the package name matches and that the app is signed by the same key as before, so a swapped file never reaches your phone.</p>
+<p>It also looks at the apps you already have and offers to keep the ones it can match to a public repository up to date. On Android 12 and newer, updates for apps it installed happen silently in the background, including updates to Plain APK itself, and it works the same on GrapheneOS and other phones without Google services.</p>
+
+<h2>Nothing in the middle</h2>
+<p>There is no server, no account and no analytics. The catalogue is a list of apps in a public git repository that anyone can extend with a pull request, and your phone talks to the code forges directly, keeping everything it learns on the device.</p>
+
+<h2>For developers</h2>
+<p>If your releases already have an APK attached, your app works with Plain APK today and you don't need to change anything. Make sure every build has a higher <code>versionCode</code> than the last one and is signed with the same key, and you can release as often as you like.</p>
+<p>An optional file in the root of your repository covers the rest:</p>
+<pre><code># .plainapk.yml
+asset: "app-*-release.apk"  # which file to pick when a release has several
+prerelease: false            # set to true to ship prereleases too
+signer: "ab:cd:…"            # SHA-256 of your signing certificate</code></pre>
+
+<footer>Plain APK is open source under the MIT license.</footer>
+</main>
+</body>
+</html>
