@@ -35,7 +35,10 @@ data class Tracked(
 }
 
 /** A catalogue entry from plainapk.com/index.json. */
-data class Listing(val pkg: String, val name: String, val repo: String, val summary: String, val signer: String?, val asset: String?)
+data class Listing(
+    val pkg: String, val name: String, val repo: String, val summary: String, val signer: String?, val asset: String?,
+    val categories: List<String> = emptyList(), val updated: Long = 0, val icon: String? = null,
+)
 
 fun JSONObject.str(k: String): String? = if (isNull(k)) null else optString(k).ifEmpty { null }
 
@@ -45,7 +48,8 @@ class Store(private val ctx: Context) {
     private val indexFile = File(ctx.filesDir, "index.json")
     // Changed on the work thread while the screen reads it on the main thread, so iteration never sees a half-made change
     val apps: MutableList<Tracked> = java.util.concurrent.CopyOnWriteArrayList(load())
-    var catalogue: List<Listing> = parseIndex(indexFile.takeIf { it.exists() }?.readText())
+    /** Empty until [loadIndex] runs on the work thread: a thousands-of-apps file is too much for the main thread. */
+    @Volatile var catalogue: List<Listing> = emptyList()
         private set
     var indexEtag: String? = ctx.getSharedPreferences("p", 0).getString("indexEtag", null)
         private set
@@ -67,6 +71,10 @@ class Store(private val ctx: Context) {
     fun find(repo: String) = apps.firstOrNull { it.repo.equals(repo, true) }
     fun findPkg(pkg: String) = apps.firstOrNull { it.pkg == pkg }
 
+    fun loadIndex() {
+        if (catalogue.isEmpty()) catalogue = parseIndex(indexFile.takeIf { it.exists() }?.readText())
+    }
+
     fun setIndex(body: String, etag: String?) {
         catalogue = parseIndex(body)
         val tmp = File(indexFile.path + ".tmp")
@@ -85,8 +93,10 @@ class Store(private val ctx: Context) {
             val a = runCatching { JSONObject(body!!).getJSONArray("apps") }.getOrNull() ?: return emptyList()
             return (0 until a.length()).map { a.getJSONObject(it) }.mapNotNull { o ->
                 val repo = Forge.normalize(o.optString("repo")) ?: return@mapNotNull null
-                Listing(o.getString("id"), o.optString("name", o.getString("id")), repo, o.optString("summary"), o.str("signer"), o.str("asset"))
-            }.sortedBy { it.name.lowercase() }
+                val cats = o.optJSONArray("categories")?.let { c -> (0 until c.length()).map { c.getString(it) } }.orEmpty()
+                Listing(o.getString("id"), o.optString("name", o.getString("id")), repo, o.optString("summary"), o.str("signer"), o.str("asset"),
+                    cats, o.optLong("updated"), o.str("icon"))
+            } // in the file's order: most recently updated first
         }
     }
 }

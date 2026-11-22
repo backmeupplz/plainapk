@@ -36,8 +36,9 @@ import android.widget.TextView
 class MainActivity : Activity() {
     private sealed class Row
     private class Header(val title: String, val action: String? = null, val onAction: (() -> Unit)? = null) : Row()
-    private class Banner(val title: String, val text: String, val button: String, val onButton: () -> Unit) : Row()
+    private class Banner(val title: String, val text: String, val button: String, val onDismiss: (() -> Unit)? = null, val onButton: () -> Unit) : Row()
     private class Note(val title: String, val text: String) : Row()
+    private class Chips(val names: List<String>, val selected: String?) : Row()
     private class Item(
         val title: String,
         val subtitle: String,
@@ -48,6 +49,7 @@ class MainActivity : Activity() {
         val onButton: (() -> Unit)? = null,
         val onClick: (() -> Unit)? = null,
         val progress: Int? = null, // null: none, -1: indeterminate, 0..100
+        val listing: Listing? = null, // catalogue entry whose icon to show once it has downloaded
         val accent: Boolean = false, // subtitle in the accent color ("update available")
         val warn: Boolean = false,
     ) : Row() {
@@ -58,6 +60,12 @@ class MainActivity : Activity() {
     private var rows = listOf<Row>()
     private var installedCache = emptySet<String>()
     private var installedAt = 0L
+    private val certCache = HashMap<String, Set<String>>() // installed package → signing certs, dropped with installedCache
+    private var category: String? = null
+    private var topCategories = emptyList<String>()
+    private var categoriesOf: List<Listing>? = null
+    private val iconsChanged = Runnable { adapter.notifyDataSetChanged() }
+    private val icons by lazy { Icons(this) { runOnUiThread { list.removeCallbacks(iconsChanged); list.postDelayed(iconsChanged, 120) } } }
     private lateinit var p: Palette
     private lateinit var search: EditText
     private lateinit var status: TextView
@@ -188,6 +196,15 @@ class MainActivity : Activity() {
             "Only for the rare update Android wants you to confirm. Everything else happens quietly.", "Turn on") {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
         }
+        // Android puts apps you rarely open to sleep and then runs their background work about once a day
+        else if (!getSystemService(android.os.PowerManager::class.java).isIgnoringBatteryOptimizations(packageName) &&
+            !getSharedPreferences("p", 0).getBoolean("batteryAsked", false)) out += Banner("Check every hour",
+            "Android lets apps you rarely open run only about once a day. Allow Plain APK to run in the background so updates arrive within the hour.",
+            "Allow", { getSharedPreferences("p", 0).edit().putBoolean("batteryAsked", true).apply(); render() }) {
+            @android.annotation.SuppressLint("BatteryLife") // an updater that must run hourly is the case this exemption exists for
+            val i = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
+            runCatching { startActivity(i) }
+        }
 
         if (url != null && store.find(url) == null && store.catalogue.none { it.repo.equals(url, true) }) {
             out += Header("Add from ${Forge.host(url)}")
@@ -213,6 +230,7 @@ class MainActivity : Activity() {
         // The installed list is costly, so it's read at most every few seconds rather than on every keystroke or percent
         if (System.currentTimeMillis() - installedAt > 3000) {
             installedCache = pm.getInstalledPackages(0).map { it.packageName }.toSet(); installedAt = System.currentTimeMillis()
+            certCache.clear()
         }
         val installed = installedCache
         val untracked = store.catalogue.filter { store.findPkg(it.pkg) == null && store.find(it.repo) == null && matches(it.repo, it.name, it.pkg, it.summary) }
@@ -226,12 +244,20 @@ class MainActivity : Activity() {
             }
         }
 
-        val rest = untracked.filter { it.pkg !in installed }
-        if (rest.isNotEmpty() || store.catalogue.isEmpty()) out += Header("Discover")
+        // Discover: newest releases first (the catalogue's order), narrowed by a category chip
+        if (categoriesOf !== store.catalogue) {
+            categoriesOf = store.catalogue
+            topCategories = store.catalogue.flatMap { it.categories }.groupingBy { it }.eachCount().entries.sortedByDescending { it.value }.take(14).map { it.key }
+        }
+        val rest = untracked.filter { it.pkg !in installed && (category == null || category in it.categories) }
+        if (rest.isNotEmpty() || store.catalogue.isEmpty() || category != null) {
+            out += Header(if (store.catalogue.size > 100 && q.isEmpty()) "Discover ${store.catalogue.size} apps" else "Discover")
+            if (topCategories.isNotEmpty() && url == null) out += Chips(topCategories, category)
+        }
         if (store.catalogue.isEmpty()) out += Work.catalogueError
             ?.let { Note("Couldn't load the catalogue", "$it. Tap the refresh button to try again, or paste a repository link above.") }
             ?: Note("Loading the catalogue…", "You can also paste any GitHub, Forgejo or GitLab link above.")
-        rest.forEach { l -> out += Item(l.name, l.summary.ifEmpty { Forge.host(l.repo) }, null, l.name, "Install", onButton = { track(l) }, onClick = { listing(l) }) }
+        rest.forEach { l -> out += Item(l.name, l.summary.ifEmpty { Forge.host(l.repo) }, null, l.name, "Install", onButton = { track(l) }, onClick = { listing(l) }, listing = l) }
 
         if (out.none { it is Item } && q.isNotEmpty()) out += Note("Nothing called “$q”", "Paste a link to the app's repository to add it.")
 
@@ -289,7 +315,8 @@ class MainActivity : Activity() {
 
     private fun newRelease(t: Tracked) = Work.installed(t.pkg) != null && t.latestTag != null && t.latestTag != t.handledTag
 
-    private fun canUpdate(l: Listing) = l.signer == null || l.signer in Work.certs(Work.installed(l.pkg)?.signingInfo)
+    private fun canUpdate(l: Listing) = l.signer == null ||
+        l.signer in certCache.getOrPut(l.pkg) { Work.certs(Work.installed(l.pkg)?.signingInfo) }
 
     private fun icon(pkg: String?): Drawable? = pkg?.let { runCatching { packageManager.getApplicationIcon(it) }.getOrNull() }
 
@@ -443,7 +470,7 @@ class MainActivity : Activity() {
 
     private fun listing(l: Listing) = bottomSheet { d ->
         val here = Work.installed(l.pkg) != null
-        sheetHeader(l.name, l.repo.substringAfter("://"), icon(l.pkg))
+        sheetHeader(l.name, l.repo.substringAfter("://"), icon(l.pkg) ?: icons.get(l))
         if (l.summary.isNotEmpty()) sheetText(l.summary, p.onSurface)
         sheetText(when {
             !here -> "Plain APK installs the APK from the latest release on ${Forge.host(l.repo)} and keeps it up to date."
@@ -470,8 +497,8 @@ class MainActivity : Activity() {
         override fun getCount() = rows.size
         override fun getItem(i: Int) = rows[i]
         override fun getItemId(i: Int) = i.toLong()
-        override fun getViewTypeCount() = 4
-        override fun getItemViewType(i: Int) = when (rows[i]) { is Header -> 0; is Item -> 1; is Banner -> 2; is Note -> 3 }
+        override fun getViewTypeCount() = 5
+        override fun getItemViewType(i: Int) = when (rows[i]) { is Header -> 0; is Item -> 1; is Banner -> 2; is Note -> 3; is Chips -> 4 }
         override fun areAllItemsEnabled() = false
         override fun isEnabled(i: Int) = false
 
@@ -480,6 +507,7 @@ class MainActivity : Activity() {
             is Item -> item(r, convert)
             is Banner -> banner(r, convert)
             is Note -> note(r, convert)
+            is Chips -> chips(r, convert)
         }
 
         private fun header(r: Header, convert: View?): View {
@@ -531,7 +559,7 @@ class MainActivity : Activity() {
             card.background = ripple(p, rounded(p.surface, if (r.first) big else small, if (r.first) big else small, if (r.last) big else small, if (r.last) big else small))
             card.setOnClickListener(r.onClick?.let { c -> View.OnClickListener { c() } })
             card.isClickable = r.onClick != null
-            (card.getChildAt(0) as ImageView).setImageDrawable(r.icon ?: letter(r.seed))
+            (card.getChildAt(0) as ImageView).setImageDrawable(r.icon ?: r.listing?.let { icons.get(it) } ?: letter(r.seed))
             val col = card.getChildAt(1) as LinearLayout
             (col.getChildAt(0) as TextView).text = r.title
             (col.getChildAt(1) as TextView).apply {
@@ -561,13 +589,44 @@ class MainActivity : Activity() {
                     setPadding(dp(20), dp(18), dp(20), dp(16))
                     addView(TextView(context).apply { textSize = 17f; setTextColor(p.onPrimaryContainer); typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL) })
                     addView(TextView(context).apply { textSize = 14f; setTextColor(p.onPrimaryContainer); alpha = 0.85f; setPadding(0, dp(4), 0, dp(12)) })
-                    addView(context.pill(p, true), LinearLayout.LayoutParams(-2, -2).apply { gravity = Gravity.END })
+                    addView(LinearLayout(context).apply {
+                        gravity = Gravity.END
+                        addView(TextView(context).apply {
+                            text = "Not now"; textSize = 14f; setTextColor(p.onPrimaryContainer); gravity = Gravity.CENTER
+                            minHeight = dp(40); setPadding(dp(16), 0, dp(16), 0); background = ripple(p, rounded(0, dp(20f)))
+                        })
+                        addView(context.pill(p, true), LinearLayout.LayoutParams(-2, -2).apply { marginStart = dp(8) })
+                    }, LinearLayout.LayoutParams(-1, -2))
                 })
             }
             val box = v.getChildAt(0) as LinearLayout
             (box.getChildAt(0) as TextView).text = r.title
             (box.getChildAt(1) as TextView).text = r.text
-            (box.getChildAt(2) as TextView).apply { text = r.button; setOnClickListener { r.onButton() } }
+            val buttons = box.getChildAt(2) as LinearLayout
+            (buttons.getChildAt(0) as TextView).apply {
+                visibility = if (r.onDismiss == null) View.GONE else View.VISIBLE
+                setOnClickListener { r.onDismiss?.invoke() }
+            }
+            (buttons.getChildAt(1) as TextView).apply { text = r.button; setOnClickListener { r.onButton() } }
+            return v
+        }
+
+        private fun chips(r: Chips, convert: View?): View {
+            val v = convert as? android.widget.HorizontalScrollView ?: android.widget.HorizontalScrollView(this@MainActivity).apply {
+                isHorizontalScrollBarEnabled = false
+                clipToPadding = false
+                setPadding(dp(16), dp(4), dp(16), dp(10))
+                addView(LinearLayout(context))
+            }
+            val row = v.getChildAt(0) as LinearLayout
+            row.removeAllViews()
+            (listOf<String?>(null) + r.names).forEach { name ->
+                row.addView(pill(p, name == r.selected).apply {
+                    text = name ?: "All"
+                    minHeight = dp(36)
+                    setOnClickListener { category = name; render() }
+                }, LinearLayout.LayoutParams(-2, -2).apply { marginEnd = dp(8) })
+            }
             return v
         }
 

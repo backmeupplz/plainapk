@@ -32,7 +32,7 @@ https://github.com/you/yourapp
 https://github.com/you/yourapp  yourapp-*-foss.apk
 ```
 
-The optional second column is a file name pattern (`*` matches anything) for releases with several APKs. The maintainers run `tools/seed.py`, which downloads your APK once and records its package name, label, description and signing certificate, so phones can tell whether an installed copy can be updated.
+The optional second column is a file name pattern (`*` matches anything) for releases with several APKs. A nightly job reads your APK's package name and signing certificate straight from the release file, so phones can tell whether an installed copy can be updated. Apps listed on IzzyOnDroid or F-Droid with their source on GitHub, GitLab or Codeberg are picked up automatically.
 
 ## A release workflow to copy
 

@@ -44,6 +44,7 @@ object Work {
         if (::ctx.isInitialized) return
         ctx = c.applicationContext
         store = Store(ctx)
+        run { store.loadIndex() }
     }
 
     fun listen(l: () -> Unit) { listeners += l }

@@ -6,7 +6,7 @@ Download: https://github.com/backmeupplz/plainapk/releases/latest/download/plain
 
 The app is plain Kotlin with no libraries: `./gradlew testDebugUnitTest assembleRelease` (JDK 21, Android SDK). Releases: `tea release create --repo backmeupplz/plainapk --tag vX.Y.Z` builds, signs and attaches `plainapk.apk` on Forgejo and GitHub; versionCode is the build minute, so nothing needs bumping.
 
-The catalogue: add a line to `catalogue.txt`, run `python3 tools/seed.py` (needs `gh`, JDK and build-tools) and commit `docs/index.json`.
+The catalogue (`index.json` and `icons/` on plainapk.com) is built by `tools/catalogue.py` in the GitHub Pages workflow on the mirror (`.github/workflows/pages.yml`), on every push and nightly: every IzzyOnDroid and F-Droid app whose source is on GitHub, GitLab or Codeberg and whose latest release carries an APK, plus `catalogue.txt`. `docs/index.json` is only a fallback.
 
 The site lives in `docs/` and is served by GitHub Pages from the GitHub mirror, behind Cloudflare. The share image is rendered from `src/og.html` with headless Chrome:
 

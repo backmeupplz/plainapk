@@ -1,0 +1,59 @@
+# plainapk.com: the site in docs/ plus the catalogue (index.json and icons/) that tools/catalogue.py builds from the
+# IzzyOnDroid and F-Droid indexes and catalogue.txt. This file runs only on the GitHub mirror (Forgejo reads
+# .forgejo/workflows), on every push the mirror makes to main and nightly, and deploys with actions/deploy-pages.
+# The job's own token is enough: the catalogue only reads public repositories. Results are cached per release download,
+# so a nightly run only inspects APKs that changed.
+name: Pages
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "20 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .catalogue-cache
+          key: catalogue-${{ github.run_id }}
+          restore-keys: catalogue-
+      - name: Catalogue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pip install --quiet pillow
+          mkdir -p .catalogue-cache/out
+          python3 tools/catalogue.py .catalogue-cache/out --cache .catalogue-cache/cache.json \
+            || echo "::warning::The catalogue build failed; publishing the previous one"
+      - name: Site
+        run: |
+          mkdir site
+          cp -R docs/. site/
+          # Without a built catalogue (first run failed), docs/index.json stays as the fallback
+          if [ -f .catalogue-cache/out/index.json ]; then
+            cp .catalogue-cache/out/index.json site/
+            cp -R .catalogue-cache/out/icons site/
+          fi
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

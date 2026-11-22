@@ -14,8 +14,8 @@ A small native Android app store that installs and silently updates apps from th
 ## Catalogue
 
 - `catalogue.txt` in this repo, one repository per line (optionally followed by an asset pattern), added by pull request.
-- `tools/seed.py` downloads the APK each line resolves to and writes `docs/index.json` with the real package name, label, repo description and signing-cert SHA-256. Pages serves it at `https://plainapk.com/index.json` (Cloudflare in front, encrypted to GitHub). That is the only file the app fetches from us.
-- Later: run the seed in CI on catalogue PRs and nightly, and pull candidates from the IzzyOnDroid and F-Droid indexes (metadata only: F-Droid builds are signed by F-Droid).
+- `tools/catalogue.py` runs in the GitHub Pages workflow on every push and nightly. Candidates are IzzyOnDroid and F-Droid apps whose source is on GitHub, GitLab or Codeberg, plus `catalogue.txt`. An app is listed only if its latest full release has an APK the picker would choose and that APK's package name equals the app id; package and signer are read from the APK with HTTP range requests (zip directory, APK Signing Block, binary manifest), cached per download URL. Name, summary, categories, last-update time and icon (96 px WebP mirrored to plainapk.com/icons) come from the indexes, IzzyOnDroid first.
+- Pages serves `index.json` and `icons/` at plainapk.com (Cloudflare in front, encrypted to GitHub). Those are the only files the app fetches from us.
 - Users can also add any repo URL by hand.
 
 ## Checking for updates
