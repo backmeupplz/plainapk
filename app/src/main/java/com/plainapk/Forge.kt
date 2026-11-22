@@ -48,10 +48,12 @@ object Forge {
 
     fun latest(repo: String, kind: String, prerelease: Boolean): Release = when (kind) {
         GITHUB -> {
-            // releases/latest redirects to the newest full release (one cheap web request); prereleases need the feed
-            val tag = (if (prerelease) null else redirectTag("$repo/releases/latest"))
-                ?: atomFirstTag(get("$repo/releases.atom")) ?: throw IOException("No releases")
-            Release(tag, githubAssets(get("$repo/releases/expanded_assets/${enc(tag)}"), path(repo), tag))
+            // releases/latest redirects to the newest full release (one cheap web request); prereleases need the feed.
+            // Both also reveal where a renamed or transferred repository lives now, whose downloads sit under the new path.
+            val found = (if (prerelease) null else releaseTagLink("$repo/releases/latest"))
+                ?: atomFirstLink(get("$repo/releases.atom")) ?: throw IOException("No releases")
+            val (path, tag) = found
+            Release(tag, githubAssets(get("https://github.com/$path/releases/expanded_assets/${enc(tag)}"), path, tag))
         }
         FORGEJO -> {
             val api = "https://${host(repo)}/api/v1/repos/${path(repo)}/releases"
@@ -60,8 +62,27 @@ object Forge {
         else -> gitlabRelease(JSONObject(get("https://${host(repo)}/api/v4/projects/${enc(path(repo))}/releases/permalink/latest")))
     }
 
-    fun atomFirstTag(atom: String): String? =
-        Regex("""/releases/tag/([^"<\s]+)""").find(atom)?.groupValues?.get(1)?.let { java.net.URLDecoder.decode(it, "UTF-8") }
+    fun atomFirstTag(atom: String): String? = atomFirstLink(atom)?.second
+
+    /** (owner/repo, tag) of the newest release link in a releases feed. */
+    fun atomFirstLink(atom: String): Pair<String, String>? = Regex("""https://github\.com/([^/"]+/[^/"]+)/releases/tag/([^"<\s]+)""").find(atom)
+        ?.let { it.groupValues[1] to java.net.URLDecoder.decode(it.groupValues[2], "UTF-8") }
+
+    /** Follows releases/latest through any rename redirects to (current owner/repo, tag), or null without releases. */
+    private fun releaseTagLink(start: String): Pair<String, String>? {
+        var url = start
+        repeat(4) {
+            val c = open(url, follow = false)
+            val loc = try { c.getHeaderField("Location") } finally { c.disconnect() } ?: return null
+            val abs = URI(url).resolve(loc).toString()
+            Regex("""^https://github\.com/([^/]+/[^/]+)/releases/tag/(.+)$""").find(abs)?.let {
+                return it.groupValues[1] to java.net.URLDecoder.decode(it.groupValues[2], "UTF-8")
+            }
+            if (!abs.startsWith("https://github.com/")) return null
+            url = abs
+        }
+        return null
+    }
 
     /** Only links into this repo's own release downloads count. */
     fun githubAssets(html: String, path: String, tag: String): List<Asset> {
@@ -148,14 +169,6 @@ object Forge {
             if (c.responseCode == 304) return null to etag
             if (c.responseCode !in 200..299) throw IOException("HTTP ${c.responseCode} from ${URI(url).host}")
             return c.inputStream.bufferedReader().readText() to c.getHeaderField("ETag")
-        } finally { c.disconnect() }
-    }
-
-    private fun redirectTag(url: String): String? {
-        val c = open(url, follow = false)
-        try {
-            val loc = c.getHeaderField("Location") ?: return null
-            return loc.substringAfter("/releases/tag/", "").ifEmpty { null }?.let { java.net.URLDecoder.decode(it, "UTF-8") }
         } finally { c.disconnect() }
     }
 

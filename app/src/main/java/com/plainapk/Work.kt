@@ -146,8 +146,10 @@ object Work {
             t.signer?.let { if (it !in apkCerts) return reject(t, rel, "Signed with a different key than before") }
             val have = installed(apk.packageName)
             if (have != null) {
-                if (certs(have.signingInfo).intersect(apkCerts).isEmpty())
-                    return reject(t, rel, "The installed app is signed by someone else (an F-Droid build?), so it can't be updated without reinstalling")
+                if (certs(have.signingInfo).intersect(apkCerts).isEmpty()) {
+                    if (t.signer == null) t.signer = apkCerts.first() // so the screen can offer to switch to this source
+                    t.handledTag = rel.tag; t.error = null; return // the screen shows it as signed differently and offers to switch
+                }
                 if (apk.longVersionCode <= have.longVersionCode) { t.handledTag = rel.tag; return } // nothing newer
             }
             t.pkg = apk.packageName
@@ -161,6 +163,78 @@ object Work {
     }
 
     private fun reject(t: Tracked, rel: Release, why: String) { t.error = why; t.handledTag = rel.tag }
+
+    // ---- switching an app to its repository's build -----------------------------------------------------------------
+
+    /** True when the copy on this phone is signed by someone other than the repository's developer (a Play build, say). */
+    fun foreign(t: Tracked): Boolean {
+        if (t.pkg == Store.SELF_PKG) return false
+        val have = installed(t.pkg) ?: return false
+        return t.signer != null && t.signer !in certs(have.signingInfo)
+    }
+
+    private class Switch(val tag: String, val code: Long, val file: File)
+    private val switching = java.util.concurrent.ConcurrentHashMap<String, Switch>()
+
+    /**
+     * Moves an app installed elsewhere with another signature over to its repository's build. Android can't update across
+     * signatures, so it has to be uninstalled (losing its data) and installed again. The new APK is downloaded and checked
+     * first, so a failed download never costs the user the app; Android asks before uninstalling and before installing.
+     */
+    fun switchSource(t: Tracked) {
+        if (store.find(t.repo) == null) { store.apps.add(t); store.save() } // so progress and any error show in the list
+        busy[t.repo] = "Checking…"; changed()
+        try {
+            val kind = t.kind ?: Forge.detect(t.repo).also { t.kind = it }
+            val rel = Forge.latest(t.repo, kind, t.prerelease)
+            val asset = Forge.pick(rel.assets, Build.SUPPORTED_ABIS.toList(), t.asset, t.repo) ?: throw IOException("No APK for this phone in ${rel.tag}")
+            busy[t.repo] = "Downloading ${rel.tag}…"; progress[t.repo] = -1; changed()
+            val file = File(File(ctx.cacheDir, "switch").apply { mkdirs() }, "${t.pkg}.apk")
+            Forge.download(asset.url, file, { stopRequested }) { pct -> progress[t.repo] = pct; changed() }
+            progress.remove(t.repo)
+            @Suppress("DEPRECATION")
+            val apk = ctx.packageManager.getPackageArchiveInfo(file.path, PackageManager.GET_SIGNING_CERTIFICATES) ?: throw IOException("${asset.name} isn't a valid APK")
+            val apkCerts = certs(apk.signingInfo)
+            if (apkCerts.isEmpty()) throw IOException("${asset.name} isn't signed")
+            if (apk.packageName != t.pkg) throw IOException("${asset.name} is ${apk.packageName}, not ${t.pkg}")
+            t.signer?.let { if (it !in apkCerts) throw IOException("${asset.name} isn't signed with the key the catalogue lists") }
+            t.signer = t.signer ?: apkCerts.first()
+            t.latestTag = rel.tag; t.error = null
+            switching[t.pkg!!] = Switch(rel.tag, apk.longVersionCode, file)
+            if (store.find(t.repo) == null) store.apps.add(t)
+            store.save()
+            busy[t.repo] = "Waiting for you to confirm the uninstall"; changed()
+            val status = PendingIntent.getBroadcast(ctx, t.repo.hashCode(),
+                Intent(ctx, InstallReceiver::class.java).putExtra("repo", t.repo).putExtra("uninstall", true),
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT).intentSender
+            ctx.packageManager.packageInstaller.uninstall(t.pkg!!, status)
+        } catch (e: Exception) {
+            busy.remove(t.repo)
+            t.error = e.message ?: e.javaClass.simpleName
+            store.save()
+        } finally {
+            progress.remove(t.repo)
+        }
+    }
+
+    fun onUninstallResult(repo: String, status: Int, confirm: Intent?) {
+        val t = store.find(repo) ?: return
+        val pkg = t.pkg ?: return
+        when (status) {
+            PackageInstaller.STATUS_PENDING_USER_ACTION -> confirm?.let { ctx.startActivity(it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+            PackageInstaller.STATUS_SUCCESS -> {
+                val s = switching.remove(pkg) ?: return
+                busy[repo] = "Installing ${s.tag}…"
+                Work.run { try { install(t, s.tag, s.code, s.file, gentle = false) } finally { s.file.delete() } }
+            }
+            else -> {
+                switching.remove(pkg)?.file?.delete()
+                busy.remove(repo)
+                t.error = "Not uninstalled, so nothing changed"
+                store.save()
+            }
+        }
+    }
 
     @SuppressLint("WrongConstant")
     private fun install(t: Tracked, tag: String, code: Long, file: File, gentle: Boolean) {
@@ -198,7 +272,7 @@ object Work {
 
     fun onResult(repo: String, tag: String, status: Int, message: String?, confirm: Intent?) {
         val t = store.find(repo) ?: return
-        if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) needsTap += repo else needsTap -= repo
+        if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) needsTap += repo else { needsTap -= repo; busy.remove(repo) }
         when (status) {
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                 if (confirm == null) return
@@ -234,11 +308,16 @@ class InstallReceiver : BroadcastReceiver() {
     override fun onReceive(c: Context, i: Intent) {
         Work.init(c)
         val repo = i.getStringExtra("repo") ?: return
-        val tag = i.getStringExtra("tag") ?: return
         val status = i.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)
         val msg = i.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
         val confirm = if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(Intent.EXTRA_INTENT, Intent::class.java)
             else @Suppress("DEPRECATION") i.getParcelableExtra(Intent.EXTRA_INTENT)
+        if (i.getBooleanExtra("uninstall", false)) {
+            synchronized(Work.store) { Work.onUninstallResult(repo, status, confirm) }
+            Work.ping()
+            return
+        }
+        val tag = i.getStringExtra("tag") ?: return
         // Right here rather than on the work thread, which may be busy with a long download
         synchronized(Work.store) { Work.onResult(repo, tag, status, msg, confirm) }
         Work.ping()

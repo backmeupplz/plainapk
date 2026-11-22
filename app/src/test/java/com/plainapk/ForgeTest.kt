@@ -58,5 +58,7 @@ class ForgeTest {
         val gb = listOf(a("banglejs-2026.11.1.apk"), a("gadgetbridge-2026.11.1.apk"))
         assertEquals("gadgetbridge-2026.11.1.apk", Forge.pick(gb, arm64, repo = "https://codeberg.org/Freeyourgadget/Gadgetbridge")!!.name)
         assertEquals("v1.2", Forge.atomFirstTag("""<link rel="alternate" href="https://github.com/o/r/releases/tag/v1.2"/>"""))
+        // A renamed repository's feed points at its new home, where its downloads live
+        assertEquals("new/r" to "v2", Forge.atomFirstLink("""<link href="https://github.com/new/r/releases/tag/v2"/>"""))
     }
 }

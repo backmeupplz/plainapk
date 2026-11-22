@@ -222,7 +222,7 @@ class MainActivity : Activity() {
             out += Header("Found on this phone", if (ok.size > 1) "Keep all updated" else null) { ok.forEach { track(it) } }
             onPhone.forEach { l ->
                 out += if (canUpdate(l)) Item(l.name, "Updates on ${Forge.host(l.repo)}", icon(l.pkg), l.name, "Keep updated", onButton = { track(l) }, onClick = { listing(l) })
-                else Item(l.name, "Installed from another source with a different signature", icon(l.pkg), l.name, onClick = { listing(l) })
+                else Item(l.name, "Installed from ${installerName(l.pkg)}, signed differently", icon(l.pkg), l.name, "Switch…", onButton = { listing(l) }, onClick = { listing(l) })
             }
         }
 
@@ -266,20 +266,23 @@ class MainActivity : Activity() {
             busy != null && pct != null && pct >= 0 -> "${busy.removeSuffix("…")} · $pct%"
             busy != null -> busy
             t.error != null -> t.error!!
+            Work.foreign(t) -> "Installed from ${installerName(t.pkg)}, signed differently than on ${Forge.host(t.repo)}"
             t.pendingTag != null && t.repo in Work.needsTap -> "${t.pendingTag} is waiting for your OK · tap Update"
             t.pendingTag != null -> "Installing ${t.pendingTag} once you're not using it"
             info == null -> "Not installed" + (t.latestTag?.let { " · $it available" } ?: "")
             newRelease(t) -> "${info.versionName} → ${t.latestTag}"
             else -> "${info.versionName}"
         }
+        val foreign = busy == null && Work.foreign(t)
         val button = when {
             busy != null -> null
+            foreign -> "Switch…"
             info == null -> "Install"
             newRelease(t) || t.pendingTag != null -> "Update"
             else -> null
         }
         return Item(label(t), subtitle, icon(t.pkg), label(t), button, filled = button == "Update",
-            onButton = { Work.stopRequested = false; Work.run { Work.check(t, install = true, force = true) } },
+            onButton = { if (foreign) sheet(t) else { Work.stopRequested = false; Work.run { Work.check(t, install = true, force = true) } } },
             onClick = { sheet(t) }, progress = if (busy != null && pct != null) pct else null,
             accent = busy == null && t.error == null && newRelease(t), warn = busy == null && t.error != null)
     }
@@ -388,10 +391,12 @@ class MainActivity : Activity() {
         t.latestTag?.let { lines += "Latest release: $it" + if (t.prerelease) " (pre-releases included)" else "" }
         if (t.pkg == Store.SELF_PKG) lines += "Plain APK keeps itself up to date too."
         sheetText(lines.joinToString("\n"))
-        t.error?.let { sheetText(it, p.error) }
+        val foreign = Work.foreign(t)
+        if (foreign) signatures(t.pkg!!, t.signer, Forge.host(t.repo)) else t.error?.let { sheetText(it, p.error) }
         val buttons = mutableListOf<Pair<Pair<String, Boolean>, () -> Unit>>()
         packageManager.getLaunchIntentForPackage(t.pkg ?: "")?.takeIf { t.pkg != Store.SELF_PKG }?.let { i -> buttons += ("Open" to false) to { d.dismiss(); startActivity(i) } }
-        if (info == null || newRelease(t)) buttons += ((if (info == null) "Install" else "Update") to true) to {
+        if (foreign) buttons += ("Switch…" to true) to { d.dismiss(); confirmSwitch(t) }
+        else if (info == null || newRelease(t)) buttons += ((if (info == null) "Install" else "Update") to true) to {
             d.dismiss(); Work.stopRequested = false; Work.run { Work.check(t, install = true, force = true) }
         }
         if (buttons.isNotEmpty()) sheetButtons(*buttons.toTypedArray())
@@ -412,6 +417,30 @@ class MainActivity : Activity() {
         }
     }
 
+    /** Who installed [pkg]: "Aurora Store", "Google Play Store", or "a file or adb" when nobody is recorded. */
+    private fun installerName(pkg: String?): String {
+        val by = pkg?.let { Work.installerOf(it) } ?: return "a file or adb"
+        return runCatching { packageManager.getApplicationLabel(packageManager.getApplicationInfo(by, 0)).toString() }.getOrDefault(by)
+    }
+
+    /** The evidence: which keys signed the copy on the phone and the repository's build. */
+    private fun LinearLayout.signatures(pkg: String, expected: String?, host: String) {
+        val have = Work.certs(Work.installed(pkg)?.signingInfo)
+        fun short(h: String) = h.take(16).chunked(2).joinToString(":").uppercase() + "…"
+        sheetText("Installed from: ${installerName(pkg)}\nSigned by: ${have.joinToString { short(it) }}\n$host releases signed by: ${expected?.let { short(it) } ?: "unknown"}")
+    }
+
+    private fun confirmSwitch(t: Tracked) = bottomSheet { d ->
+        val name = label(t)
+        val host = Forge.host(t.repo)
+        sheetHeader("Switch $name to $host?", t.repo.substringAfter("://"), icon(t.pkg))
+        sheetText("Plain APK downloads and checks the $host version first. Then Android asks you to uninstall $name, and to install the new one. From then on it updates on its own.")
+        sheetText("Uninstalling deletes everything $name keeps on this phone: accounts, settings, keys and downloads. If any of that matters, back it up or export it inside $name before you continue.", p.error)
+        sheetButtons(("Cancel" to false) to { d.dismiss() }, ("Uninstall and reinstall" to true) to {
+            d.dismiss(); Work.stopRequested = false; Work.run { Work.switchSource(t) }
+        })
+    }
+
     private fun listing(l: Listing) = bottomSheet { d ->
         val here = Work.installed(l.pkg) != null
         sheetHeader(l.name, l.repo.substringAfter("://"), icon(l.pkg))
@@ -419,11 +448,13 @@ class MainActivity : Activity() {
         sheetText(when {
             !here -> "Plain APK installs the APK from the latest release on ${Forge.host(l.repo)} and keeps it up to date."
             canUpdate(l) -> "Already on this phone and signed by the same developer, so Plain APK can keep it up to date."
-            else -> "The copy on this phone is signed by someone else (often an F-Droid or Play build). Updating it from ${Forge.host(l.repo)} would mean uninstalling it first, which loses its data."
+            else -> "The copy on this phone came from ${installerName(l.pkg)} and is signed with a different key than the developer's releases on ${Forge.host(l.repo)} (Play builds often are), so Android won't let one update the other."
         })
+        if (here && !canUpdate(l)) signatures(l.pkg, l.signer, Forge.host(l.repo))
         val buttons = mutableListOf<Pair<Pair<String, Boolean>, () -> Unit>>()
         if (!here) buttons += ("Install" to true) to { d.dismiss(); track(l) }
         else if (canUpdate(l)) buttons += ("Keep updated" to true) to { d.dismiss(); track(l) }
+        else buttons += ("Switch…" to true) to { d.dismiss(); confirmSwitch(Tracked(l.repo, l.pkg, l.name, asset = l.asset, signer = l.signer)) }
         if (buttons.isNotEmpty()) sheetButtons(*buttons.toTypedArray())
         sheetAction("View source on ${Forge.host(l.repo)}") { d.dismiss(); open(l.repo) }
     }
