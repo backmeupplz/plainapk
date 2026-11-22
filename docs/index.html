@@ -47,6 +47,8 @@ p { margin: 0 0 16px; }
 pre { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; overflow-x: auto; font-size: 14px; }
 code { font-family: var(--mono); }
 a { color: var(--pen); }
+.button { display: inline-block; background: var(--pen); color: light-dark(#fff, #151929); text-decoration: none; font-weight: 700; padding: 14px 22px; border-radius: 999px; margin: 16px 0 4px; }
+.small { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
 footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
 </style>
 </head>
@@ -57,7 +59,8 @@ footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule);
 <h1>Apps straight from their releases, updated while you sleep.</h1>
 <p class="lead">Plain APK is a small Android app store that installs apps directly from the developer's GitHub, Forgejo or GitLab releases and keeps them up to date in the background, even when a project ships a new build every hour.</p>
 
-<div class="note">Plain APK is being built in the open right now, so there is nothing to install yet. Follow along on <a href="https://git.borodutch.com/backmeupplz/plainapk">Forgejo</a> or the <a href="https://github.com/backmeupplz/plainapk">GitHub mirror</a>.</div>
+<p><a class="button" href="https://github.com/backmeupplz/plainapk/releases/latest/download/plainapk.apk">Download Plain APK</a></p>
+<p class="small">For Android 12 and newer, about 100 KB. Open the file on your phone and allow your browser to install it once; from then on Plain APK updates itself. The source is on <a href="https://git.borodutch.com/backmeupplz/plainapk">Forgejo</a> and mirrored to <a href="https://github.com/backmeupplz/plainapk">GitHub</a>, and the release is signed with a certificate whose SHA-256 is <code>88:B4:92:AC:67:BB:10:2E:14:86:18:84:FA:0F:C6:83:ED:DA:0C:4E:FE:56:AC:C6:E4:D1:45:70:E0:73:27:E1</code>.</p>
 
 <h2>How it works</h2>
 <p>You paste a repository link or pick an app from the catalogue, and Plain APK downloads the APK the developer attached to their latest release. Before installing anything it checks that the package name matches and that the app is signed by the same key as before, so a swapped file never reaches your phone.</p>
@@ -67,12 +70,10 @@ footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule);
 <p>There is no server, no account and no analytics. The catalogue is a list of apps in a public git repository that anyone can extend with a pull request, and your phone talks to the code forges directly, keeping everything it learns on the device.</p>
 
 <h2>For developers</h2>
-<p>If your releases already have an APK attached, your app will work with Plain APK without any changes. Make sure every build has a higher <code>versionCode</code> than the last one and is signed with the same key, and you can release as often as you like.</p>
-<p>An optional file in the root of your repository covers the rest:</p>
-<pre><code># .plainapk.yml
-asset: "app-*-release.apk"  # which file to pick when a release has several
-prerelease: false            # set to true to ship prereleases too
-signer: "ab:cd:…"            # SHA-256 of your signing certificate</code></pre>
+<p>If your releases already have an APK attached, your app works with Plain APK without any changes: people paste your repository link, or you add a line to <a href="https://git.borodutch.com/backmeupplz/plainapk/src/branch/main/catalogue.txt">catalogue.txt</a> with a pull request to list it for everyone. Make sure every build has a higher <code>versionCode</code> than the last one and is signed with the same key, and you can release as often as you like.</p>
+<p>When a release carries several APKs, Plain APK takes the one built for the phone's processor, then a universal one, prefers files named after your repository and skips debug and F-Droid builds. If it should take a specific file, put a pattern after your repository in the catalogue:</p>
+<pre><code># catalogue.txt
+https://github.com/you/app  app-*-release.apk</code></pre>
 
 <footer>Plain APK is open source under the MIT license.</footer>
 </main>

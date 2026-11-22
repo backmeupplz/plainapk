@@ -31,6 +31,9 @@ object Work {
 
     /** repo → what's happening right now ("Downloading…"), shown in the list. */
     val busy = java.util.concurrent.ConcurrentHashMap<String, String>()
+    /** repo → download progress in percent, -1 while the size is unknown. */
+    val progress = java.util.concurrent.ConcurrentHashMap<String, Int>()
+    val lastCheck get() = ctx.getSharedPreferences("p", 0).getLong("lastCheck", 0)
     @Volatile var foreground = false
     @Volatile var catalogueError: String? = null
     @Volatile var stopRequested = false
@@ -96,6 +99,7 @@ object Work {
         // Our own update restarts this process, so it goes last
         for (t in store.apps.sortedBy { it.pkg == Store.SELF_PKG }) {
             if (stopRequested) return
+            if (t.pkg == Store.SELF_PKG) ctx.getSharedPreferences("p", 0).edit().putLong("lastCheck", System.currentTimeMillis()).commit()
             check(t, install = install && installed(t.pkg) != null)
         }
     }
@@ -128,7 +132,9 @@ object Work {
         dir.listFiles()?.forEach { it.delete() } // one download at a time; leftovers are from killed runs
         val file = File(dir, "download.apk")
         try {
-            Forge.download(asset.url, file) { stopRequested }
+            progress[t.repo] = -1
+            Forge.download(asset.url, file, { stopRequested }) { pct -> progress[t.repo] = pct; changed() }
+            progress.remove(t.repo)
             @Suppress("DEPRECATION")
             val apk = ctx.packageManager.getPackageArchiveInfo(file.path, PackageManager.GET_SIGNING_CERTIFICATES)
                 ?: return reject(t, rel, "${asset.name} isn't a valid APK")
@@ -147,6 +153,7 @@ object Work {
             busy[t.repo] = "Installing ${rel.tag}…"; changed()
             install(t, rel.tag, apk.longVersionCode, file, gentle = !foreground)
         } finally {
+            progress.remove(t.repo)
             if (!file.delete()) file.deleteOnExit()
         }
     }

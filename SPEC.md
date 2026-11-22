@@ -13,10 +13,9 @@ A small native Android app store that installs and silently updates apps from th
 
 ## Catalogue
 
-- `catalogue/<package.name>.yml` in this repo, one file per app, added by pull request: `repo` (forge URL), `signer` (SHA-256 of the signing cert), optional `asset` glob, name, summary, icon URL.
-- CI validates each PR: the repo exists, the latest release has an APK, its package name matches the file name and its signer matches `signer`.
-- A nightly CI job seeds candidates from the IzzyOnDroid index (upstream-signed APKs from releases) and the F-Droid index (metadata only: package name → source repo; F-Droid builds are signed by F-Droid), keeping only apps whose upstream releases ship APKs.
-- CI builds `docs/index.json` (small, gzip-friendly) and Pages serves it at `https://plainapk.com/index.json`. That is the only file the app fetches from us.
+- `catalogue.txt` in this repo, one repository per line (optionally followed by an asset pattern), added by pull request.
+- `tools/seed.py` downloads the APK each line resolves to and writes `docs/index.json` with the real package name, label, repo description and signing-cert SHA-256. Pages serves it at `https://plainapk.com/index.json` (Cloudflare in front, encrypted to GitHub). That is the only file the app fetches from us.
+- Later: run the seed in CI on catalogue PRs and nightly, and pull candidates from the IzzyOnDroid and F-Droid indexes (metadata only: F-Droid builds are signed by F-Droid).
 - Users can also add any repo URL by hand.
 
 ## Checking for updates
@@ -28,7 +27,7 @@ A small native Android app store that installs and silently updates apps from th
 
 ## Choosing the asset
 
-The default needs no configuration. Take the latest non-draft, non-prerelease release with at least one `.apk`. Prefer the file whose name contains the device's primary ABI, otherwise one with no ABI in its name, and skip names containing `debug` or `fdroid`. `.plainapk.yml` in the repo root can override this with `asset` (glob), `prerelease` (bool) and `signer`.
+The default needs no configuration. Take the latest non-draft, non-prerelease release with at least one `.apk`. Prefer the file whose name contains the device's primary ABI, otherwise one with no ABI in its name, then a file named after the repository, then the shortest name; names containing `debug`, `fdroid`, `unsigned`, `wear` or `tv` go last. A catalogue line can override this with an asset pattern, and each app can opt into prereleases in its sheet.
 
 ## Installing and verifying
 

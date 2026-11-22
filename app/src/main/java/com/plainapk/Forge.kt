@@ -159,21 +159,27 @@ object Forge {
         } finally { c.disconnect() }
     }
 
-    /** Streams [url] into [to], checking [cancelled] between chunks. */
-    fun download(url: String, to: File, cancelled: () -> Boolean) {
+    /** Streams [url] into [to], checking [cancelled] between chunks and reporting whole percents to [progress]. */
+    fun download(url: String, to: File, cancelled: () -> Boolean, progress: (Int) -> Unit = {}) {
         val c = open(url)
         try {
             if (c.responseCode !in 200..299) throw IOException("HTTP ${c.responseCode} downloading")
             if (!c.url.toString().startsWith("https://")) throw IOException("Redirected off HTTPS")
+            val total = c.contentLengthLong
             val part = File(to.path + ".part")
             c.inputStream.use { input ->
                 part.outputStream().use { out ->
                     val buf = ByteArray(64 * 1024)
+                    var done = 0L
+                    var shown = -1
                     while (true) {
                         if (cancelled()) throw IOException("Stopped")
                         val n = input.read(buf)
                         if (n < 0) break
                         out.write(buf, 0, n)
+                        done += n
+                        val pct = if (total > 0) (done * 100 / total).toInt() else -1
+                        if (pct != shown) { shown = pct; progress(pct) }
                     }
                 }
             }
