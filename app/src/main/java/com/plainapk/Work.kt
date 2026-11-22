@@ -33,6 +33,8 @@ object Work {
     val busy = java.util.concurrent.ConcurrentHashMap<String, String>()
     /** repo → download progress in percent, -1 while the size is unknown. */
     val progress = java.util.concurrent.ConcurrentHashMap<String, Int>()
+    /** Repos whose install waits for the user's confirmation in Android's dialog. */
+    val needsTap: MutableSet<String> = java.util.concurrent.ConcurrentHashMap.newKeySet()
     val lastCheck get() = ctx.getSharedPreferences("p", 0).getLong("lastCheck", 0)
     @Volatile var foreground = false
     @Volatile var catalogueError: String? = null
@@ -170,7 +172,7 @@ object Work {
             setSize(file.length())
             setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
             setInstallReason(PackageManager.INSTALL_REASON_USER)
-            setPackageSource(PackageInstaller.PACKAGE_SOURCE_STORE)
+            if (Build.VERSION.SDK_INT >= 33) setPackageSource(PackageInstaller.PACKAGE_SOURCE_STORE)
         }
         val id = pi.createSession(params)
         pi.openSession(id).use { s ->
@@ -196,6 +198,7 @@ object Work {
 
     fun onResult(repo: String, tag: String, status: Int, message: String?, confirm: Intent?) {
         val t = store.find(repo) ?: return
+        if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) needsTap += repo else needsTap -= repo
         when (status) {
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                 if (confirm == null) return
@@ -234,7 +237,8 @@ class InstallReceiver : BroadcastReceiver() {
         val tag = i.getStringExtra("tag") ?: return
         val status = i.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)
         val msg = i.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
-        val confirm = i.getParcelableExtra(Intent.EXTRA_INTENT, Intent::class.java)
+        val confirm = if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(Intent.EXTRA_INTENT, Intent::class.java)
+            else @Suppress("DEPRECATION") i.getParcelableExtra(Intent.EXTRA_INTENT)
         // Right here rather than on the work thread, which may be busy with a long download
         synchronized(Work.store) { Work.onResult(repo, tag, status, msg, confirm) }
         Work.ping()

@@ -43,7 +43,8 @@ fun JSONObject.str(k: String): String? = if (isNull(k)) null else optString(k).i
 class Store(private val ctx: Context) {
     private val file = File(ctx.filesDir, "apps.json")
     private val indexFile = File(ctx.filesDir, "index.json")
-    val apps: MutableList<Tracked> = load()
+    // Changed on the work thread while the screen reads it on the main thread, so iteration never sees a half-made change
+    val apps: MutableList<Tracked> = java.util.concurrent.CopyOnWriteArrayList(load())
     var catalogue: List<Listing> = parseIndex(indexFile.takeIf { it.exists() }?.readText())
         private set
     var indexEtag: String? = ctx.getSharedPreferences("p", 0).getString("indexEtag", null)

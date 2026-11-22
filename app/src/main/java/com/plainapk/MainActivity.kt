@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -55,6 +56,8 @@ class MainActivity : Activity() {
     }
 
     private var rows = listOf<Row>()
+    private var installedCache = emptySet<String>()
+    private var installedAt = 0L
     private lateinit var p: Palette
     private lateinit var search: EditText
     private lateinit var status: TextView
@@ -181,7 +184,7 @@ class MainActivity : Activity() {
             "Android asks once. Without it nothing can be installed or updated.", "Allow") {
             startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
         }
-        else if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) out += Banner("Turn on notifications",
+        else if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) out += Banner("Turn on notifications",
             "Only for the rare update Android wants you to confirm. Everything else happens quietly.", "Turn on") {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
         }
@@ -207,7 +210,11 @@ class MainActivity : Activity() {
             others.sortedWith(compareBy({ Work.installed(it.pkg) == null }, { label(it).lowercase() })).forEach { out += appItem(it) }
         }
 
-        val installed = pm.getInstalledPackages(0).map { it.packageName }.toSet()
+        // The installed list is costly, so it's read at most every few seconds rather than on every keystroke or percent
+        if (System.currentTimeMillis() - installedAt > 3000) {
+            installedCache = pm.getInstalledPackages(0).map { it.packageName }.toSet(); installedAt = System.currentTimeMillis()
+        }
+        val installed = installedCache
         val untracked = store.catalogue.filter { store.findPkg(it.pkg) == null && store.find(it.repo) == null && matches(it.repo, it.name, it.pkg, it.summary) }
         val onPhone = untracked.filter { it.pkg in installed }
         if (onPhone.isNotEmpty()) {
@@ -259,6 +266,7 @@ class MainActivity : Activity() {
             busy != null && pct != null && pct >= 0 -> "${busy.removeSuffix("…")} · $pct%"
             busy != null -> busy
             t.error != null -> t.error!!
+            t.pendingTag != null && t.repo in Work.needsTap -> "${t.pendingTag} is waiting for your OK · tap Update"
             t.pendingTag != null -> "Installing ${t.pendingTag} once you're not using it"
             info == null -> "Not installed" + (t.latestTag?.let { " · $it available" } ?: "")
             newRelease(t) -> "${info.versionName} → ${t.latestTag}"
@@ -297,16 +305,28 @@ class MainActivity : Activity() {
     /** A sheet drawn over the list inside this window (edge to edge, unlike a Dialog's window); back or a tap above closes it. */
     private inner class Sheet {
         lateinit var layer: View
-        private val back = android.window.OnBackInvokedCallback { dismiss() }
+        private val back: Any? = if (Build.VERSION.SDK_INT >= 33) android.window.OnBackInvokedCallback { dismiss() } else null
         fun show() {
             frame.addView(layer)
+            openSheet = this
             layer.alpha = 0f; layer.animate().alpha(1f).setDuration(150).start()
-            onBackInvokedDispatcher.registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, back)
+            if (Build.VERSION.SDK_INT >= 33)
+                onBackInvokedDispatcher.registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, back as android.window.OnBackInvokedCallback)
         }
         fun dismiss() {
-            onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back)
+            if (openSheet !== this) return
+            openSheet = null
+            if (Build.VERSION.SDK_INT >= 33) onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back as android.window.OnBackInvokedCallback)
             layer.animate().alpha(0f).setDuration(120).withEndAction { frame.removeView(layer) }.start()
         }
+    }
+
+    private var openSheet: Sheet? = null
+
+    @Deprecated("Android 12 only; 13+ uses the OnBackInvokedCallback above")
+    @android.annotation.SuppressLint("GestureBackNavigation") // only Android 12 lands here, which has no OnBackInvokedDispatcher
+    override fun onBackPressed() {
+        openSheet?.dismiss() ?: @Suppress("DEPRECATION") super.onBackPressed()
     }
 
     private fun bottomSheet(build: LinearLayout.(Sheet) -> Unit) {

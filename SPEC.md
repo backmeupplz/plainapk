@@ -4,9 +4,9 @@ A small native Android app store that installs and silently updates apps from th
 
 ## Hard requirements
 
-- No server of our own. The phone talks to the forges directly and keeps all state in local SQLite.
+- No server of our own. The phone talks to the forges directly and keeps all state in two JSON files in app storage (tracked apps, cached catalogue).
 - No account, analytics, crash reporting, Google Play services or third-party SDKs.
-- Native Kotlin and as small and fast as possible. minSdk 31 (Android 12), because older versions can't update silently.
+- Native Kotlin with no libraries (framework Views, JobScheduler, HttpURLConnection, org.json), as small and fast as possible. minSdk 31 (Android 12), because older versions can't update silently.
 - Works the same on GrapheneOS and other de-Googled phones.
 - Handles projects that publish a release every hour.
 - Updates itself.
@@ -20,10 +20,10 @@ A small native Android app store that installs and silently updates apps from th
 
 ## Checking for updates
 
-- **GitHub:** poll `https://github.com/O/R/releases.atom` with `If-None-Match`. That is the website, not the API, so the 60/h unauthenticated API limit doesn't apply. When the tag changes, read the asset links from `https://github.com/O/R/releases/expanded_assets/<tag>`. Use the API, with an optional user token, only as a fallback.
+- **GitHub:** read the `Location` of `https://github.com/O/R/releases/latest` (newest full release; `releases.atom` when pre-releases are on). That is the website, not the API, so the 60/h unauthenticated API limit doesn't apply. When the tag is new, read the asset links from `https://github.com/O/R/releases/expanded_assets/<tag>`; only links under the repo's own `/releases/download/` count.
 - **Forgejo:** `/O/R/releases.rss` or the API.
 - **GitLab:** the API (500 requests a minute unauthenticated).
-- WorkManager periodic work, default every hour (minimum 15 minutes), on unmetered networks unless the user says otherwise.
+- A persisted JobScheduler job every hour on any network. Android may defer it for apps in a low standby bucket; check `am get-standby-bucket com.plainapk` on real phones.
 
 ## Choosing the asset
 
