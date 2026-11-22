@@ -134,13 +134,14 @@ class MainActivity : Activity() {
         for (t in apps.sortedWith(compareBy({ !newRelease(it) }, { (it.name ?: it.repo).lowercase() }))) {
             val info = Work.installed(t.pkg)
             val status = Work.busy[t.repo] ?: t.error?.let { "⚠ $it" } ?: when {
+                t.pendingTag != null -> "Installing ${t.pendingTag} when Android lets it (or waiting for your OK)"
                 info == null -> "Not installed" + (t.latestTag?.let { " · $it" } ?: "")
                 newRelease(t) -> "${info.versionName} → ${t.latestTag}"
                 else -> "${info.versionName} · up to date"
             }
             out += Row(t.name ?: t.repo.substringAfterLast('/'), status, icon(t.pkg),
                 button = when { Work.busy.containsKey(t.repo) -> null; info == null -> "Install"; newRelease(t) -> "Update"; else -> null },
-                onButton = { Work.stopRequested = false; Work.run { Work.check(t, install = true) } },
+                onButton = { Work.stopRequested = false; Work.run { Work.check(t, install = true, force = true) } },
                 onClick = { menu(t) }, app = true)
         }
 
@@ -164,7 +165,7 @@ class MainActivity : Activity() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun newRelease(t: Tracked) = Work.installed(t.pkg) != null && t.latestTag != null && t.latestTag != t.handledTag && t.latestTag != t.pendingTag
+    private fun newRelease(t: Tracked) = Work.installed(t.pkg) != null && t.latestTag != null && t.latestTag != t.handledTag
 
     private fun canUpdate(l: Listing) = l.signer == null || l.signer in Work.certs(Work.installed(l.pkg)?.signingInfo)
 
@@ -228,7 +229,7 @@ class MainActivity : Activity() {
                     if (header) { textSize = 13f; typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD); isAllCaps = true }
                     else { textSize = 16f }
                 })
-                addView(TextView(context).apply { textSize = 13f; alpha = 0.7f })
+                addView(TextView(context).apply { textSize = 13f; alpha = 0.7f; maxLines = 3; ellipsize = android.text.TextUtils.TruncateAt.END })
             }, LinearLayout.LayoutParams(0, -2, 1f))
             addView(Button(context, null, 0, android.R.style.Widget_DeviceDefault_Button_Borderless_Colored))
         }

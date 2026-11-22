@@ -100,14 +100,15 @@ object Work {
         }
     }
 
-    fun check(t: Tracked, install: Boolean) {
+    /** [force]: a tap on Update, which retries a release still waiting on the system installer. */
+    fun check(t: Tracked, install: Boolean, force: Boolean = false) {
         busy[t.repo] = "Checking…"; changed()
         try {
             val kind = t.kind ?: Forge.detect(t.repo).also { t.kind = it }
             val rel = Forge.latest(t.repo, kind, t.prerelease)
             t.latestTag = rel.tag
             t.error = null
-            if (install && t.handledTag != rel.tag && t.pendingTag != rel.tag) update(t, rel)
+            if (install && t.handledTag != rel.tag && (force || t.pendingTag != rel.tag)) update(t, rel)
         } catch (e: Exception) {
             t.error = e.message ?: e.javaClass.simpleName
         } finally {
