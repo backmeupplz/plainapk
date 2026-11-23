@@ -28,6 +28,8 @@ android {
     }
     dependenciesInfo { includeInApk = false; includeInBundle = false }
     testOptions { unitTests.isReturnDefaultValues = true }
+    // Lists the values-* languages in Android 13+'s per-app language settings
+    androidResources { generateLocaleConfig = true }
     buildTypes {
         release {
             isMinifyEnabled = true

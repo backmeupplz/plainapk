@@ -29,7 +29,7 @@ object Work {
         private set
     private lateinit var ctx: Context
 
-    /** repo → what's happening right now ("Downloading…"), shown in the list. */
+    /** repo → what's happening right now ("Downloading v1.2", without an ellipsis), shown in the list. */
     val busy = java.util.concurrent.ConcurrentHashMap<String, String>()
     /** repo → download progress in percent, -1 while the size is unknown. */
     val progress = java.util.concurrent.ConcurrentHashMap<String, Int>()
@@ -51,6 +51,7 @@ object Work {
     fun unlisten(l: () -> Unit) { listeners -= l }
     private fun changed() = main.post { listeners.toList().forEach { it() } }
     fun ping() = changed()
+    private fun s(id: Int, vararg args: Any): String = ctx.getString(id, *args)
 
     fun run(task: () -> Unit) = thread.execute {
         try { task() } catch (e: Exception) { android.util.Log.w("plainapk", "task failed", e) }
@@ -109,7 +110,7 @@ object Work {
 
     /** [force]: a tap on Update, which retries a release still waiting on the system installer. */
     fun check(t: Tracked, install: Boolean, force: Boolean = false) {
-        busy[t.repo] = "Checking…"; changed()
+        busy[t.repo] = s(R.string.checking); changed()
         try {
             val kind = t.kind ?: Forge.detect(t.repo).also { t.kind = it }
             val rel = Forge.latest(t.repo, kind, t.prerelease)
@@ -129,8 +130,8 @@ object Work {
     /** Downloads, checks and hands the release to the system installer. */
     fun update(t: Tracked, rel: Release) {
         val asset = Forge.pick(rel.assets, Build.SUPPORTED_ABIS.toList(), t.asset, t.repo)
-        if (asset == null) { t.error = "No APK for this phone in ${rel.tag}"; t.handledTag = rel.tag; return }
-        busy[t.repo] = "Downloading ${rel.tag}…"; changed()
+        if (asset == null) { t.error = s(R.string.no_apk, rel.tag); t.handledTag = rel.tag; return }
+        busy[t.repo] = s(R.string.downloading, rel.tag); changed()
         val dir = File(ctx.cacheDir, "apk").apply { mkdirs() }
         dir.listFiles()?.forEach { it.delete() } // one download at a time; leftovers are from killed runs
         val file = File(dir, "download.apk")
@@ -140,11 +141,11 @@ object Work {
             progress.remove(t.repo)
             @Suppress("DEPRECATION")
             val apk = ctx.packageManager.getPackageArchiveInfo(file.path, PackageManager.GET_SIGNING_CERTIFICATES)
-                ?: return reject(t, rel, "${asset.name} isn't a valid APK")
+                ?: return reject(t, rel, s(R.string.not_valid_apk, asset.name))
             val apkCerts = certs(apk.signingInfo)
-            if (apkCerts.isEmpty()) return reject(t, rel, "${asset.name} isn't signed")
-            if (t.pkg != null && apk.packageName != t.pkg) return reject(t, rel, "${asset.name} is ${apk.packageName}, not ${t.pkg}")
-            t.signer?.let { if (it !in apkCerts) return reject(t, rel, "Signed with a different key than before") }
+            if (apkCerts.isEmpty()) return reject(t, rel, s(R.string.not_signed, asset.name))
+            if (t.pkg != null && apk.packageName != t.pkg) return reject(t, rel, s(R.string.wrong_package, asset.name, apk.packageName, t.pkg!!))
+            t.signer?.let { if (it !in apkCerts) return reject(t, rel, s(R.string.different_key)) }
             val have = installed(apk.packageName)
             if (have != null) {
                 if (certs(have.signingInfo).intersect(apkCerts).isEmpty()) {
@@ -155,7 +156,7 @@ object Work {
             }
             t.pkg = apk.packageName
             if (t.name == null) t.name = apk.applicationInfo?.let { ai -> ai.sourceDir = file.path; ai.publicSourceDir = file.path; ctx.packageManager.getApplicationLabel(ai).toString() }
-            busy[t.repo] = "Installing ${rel.tag}…"; changed()
+            busy[t.repo] = s(R.string.installing, rel.tag); changed()
             install(t, rel.tag, apk.longVersionCode, file, gentle = !foreground)
         } finally {
             progress.remove(t.repo)
@@ -184,27 +185,27 @@ object Work {
      */
     fun switchSource(t: Tracked) {
         if (store.find(t.repo) == null) { store.apps.add(t); store.save() } // so progress and any error show in the list
-        busy[t.repo] = "Checking…"; changed()
+        busy[t.repo] = s(R.string.checking); changed()
         try {
             val kind = t.kind ?: Forge.detect(t.repo).also { t.kind = it }
             val rel = Forge.latest(t.repo, kind, t.prerelease)
-            val asset = Forge.pick(rel.assets, Build.SUPPORTED_ABIS.toList(), t.asset, t.repo) ?: throw IOException("No APK for this phone in ${rel.tag}")
-            busy[t.repo] = "Downloading ${rel.tag}…"; progress[t.repo] = -1; changed()
+            val asset = Forge.pick(rel.assets, Build.SUPPORTED_ABIS.toList(), t.asset, t.repo) ?: throw IOException(s(R.string.no_apk, rel.tag))
+            busy[t.repo] = s(R.string.downloading, rel.tag); progress[t.repo] = -1; changed()
             val file = File(File(ctx.cacheDir, "switch").apply { mkdirs() }, "${t.pkg}.apk")
             Forge.download(asset.url, file, { stopRequested }) { pct -> progress[t.repo] = pct; changed() }
             progress.remove(t.repo)
             @Suppress("DEPRECATION")
-            val apk = ctx.packageManager.getPackageArchiveInfo(file.path, PackageManager.GET_SIGNING_CERTIFICATES) ?: throw IOException("${asset.name} isn't a valid APK")
+            val apk = ctx.packageManager.getPackageArchiveInfo(file.path, PackageManager.GET_SIGNING_CERTIFICATES) ?: throw IOException(s(R.string.not_valid_apk, asset.name))
             val apkCerts = certs(apk.signingInfo)
-            if (apkCerts.isEmpty()) throw IOException("${asset.name} isn't signed")
-            if (apk.packageName != t.pkg) throw IOException("${asset.name} is ${apk.packageName}, not ${t.pkg}")
-            t.signer?.let { if (it !in apkCerts) throw IOException("${asset.name} isn't signed with the key the catalogue lists") }
+            if (apkCerts.isEmpty()) throw IOException(s(R.string.not_signed, asset.name))
+            if (apk.packageName != t.pkg) throw IOException(s(R.string.wrong_package, asset.name, apk.packageName, t.pkg!!))
+            t.signer?.let { if (it !in apkCerts) throw IOException(s(R.string.not_catalogue_key, asset.name)) }
             t.signer = t.signer ?: apkCerts.first()
             t.latestTag = rel.tag; t.error = null
             switching[t.pkg!!] = Switch(rel.tag, apk.longVersionCode, file)
             if (store.find(t.repo) == null) store.apps.add(t)
             store.save()
-            busy[t.repo] = "Waiting for you to confirm the uninstall"; changed()
+            busy[t.repo] = s(R.string.waiting_uninstall); changed()
             val status = PendingIntent.getBroadcast(ctx, t.repo.hashCode(),
                 Intent(ctx, InstallReceiver::class.java).putExtra("repo", t.repo).putExtra("uninstall", true),
                 PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT).intentSender
@@ -224,14 +225,14 @@ object Work {
         when (status) {
             PackageInstaller.STATUS_PENDING_USER_ACTION -> confirm?.let { ctx.startActivity(it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             PackageInstaller.STATUS_SUCCESS -> {
-                val s = switching.remove(pkg) ?: return
-                busy[repo] = "Installing ${s.tag}…"
-                Work.run { try { install(t, s.tag, s.code, s.file, gentle = false) } finally { s.file.delete() } }
+                val sw = switching.remove(pkg) ?: return
+                busy[repo] = s(R.string.installing, sw.tag)
+                Work.run { try { install(t, sw.tag, sw.code, sw.file, gentle = false) } finally { sw.file.delete() } }
             }
             else -> {
                 switching.remove(pkg)?.file?.delete()
                 busy.remove(repo)
-                t.error = "Not uninstalled, so nothing changed"
+                t.error = s(R.string.not_uninstalled)
                 store.save()
             }
         }
@@ -278,7 +279,7 @@ object Work {
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                 if (confirm == null) return
                 if (foreground) ctx.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                else notify(t, "Tap to update ${t.name ?: t.pkg}", "Android wants you to confirm this one; later updates are automatic.",
+                else notify(t, s(R.string.notify_title, t.name ?: t.pkg ?: ""), s(R.string.notify_text),
                     PendingIntent.getActivity(ctx, repo.hashCode(), confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
             }
             PackageInstaller.STATUS_SUCCESS -> {
@@ -290,7 +291,7 @@ object Work {
                 if (status == PackageInstaller.STATUS_FAILURE_BLOCKED) t.error = message
             }
             else -> {
-                t.pendingTag = null; t.error = message ?: "Install failed"
+                t.pendingTag = null; t.error = message ?: s(R.string.install_failed)
                 if (status == PackageInstaller.STATUS_FAILURE_INCOMPATIBLE || status == PackageInstaller.STATUS_FAILURE_CONFLICT) t.handledTag = tag
             }
         }
@@ -299,7 +300,7 @@ object Work {
 
     fun notify(t: Tracked, title: String, text: String, tap: PendingIntent) {
         val nm = ctx.getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel("updates", "Updates that need you", NotificationManager.IMPORTANCE_DEFAULT))
+        nm.createNotificationChannel(NotificationChannel("updates", s(R.string.channel_updates), NotificationManager.IMPORTANCE_DEFAULT))
         nm.notify(t.repo.hashCode(), Notification.Builder(ctx, "updates").setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title).setContentText(text).setContentIntent(tap).setAutoCancel(true).build())
     }

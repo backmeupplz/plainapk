@@ -87,11 +87,11 @@ class MainActivity : Activity() {
         )
 
         val title = TextView(this).apply {
-            text = "Plain APK"; textSize = 30f; setTextColor(p.onSurface)
+            text = s(R.string.app_name); textSize = 30f; setTextColor(p.onSurface)
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
         }
         status = TextView(this).apply { textSize = 14f; setTextColor(p.muted); setPadding(0, dp(2), 0, 0) }
-        refreshButton = iconButton(R.drawable.ic_refresh, "Check for updates") {
+        refreshButton = iconButton(R.drawable.ic_refresh, s(R.string.check_for_updates)) {
             Work.stopRequested = false
             Work.run { Work.checkAll(install = true) }
         }
@@ -104,9 +104,9 @@ class MainActivity : Activity() {
             }, LinearLayout.LayoutParams(0, -2, 1f))
             addView(refreshButton, LinearLayout.LayoutParams(dp(48), dp(48)))
         }
-        val clear = iconButton(R.drawable.ic_close, "Clear") { search.setText("") }.apply { visibility = View.GONE }
+        val clear = iconButton(R.drawable.ic_close, s(R.string.clear)) { search.setText("") }.apply { visibility = View.GONE }
         search = EditText(this).apply {
-            hint = "Search, or paste a repository link"
+            hint = s(R.string.search_hint)
             setHintTextColor(p.muted); setTextColor(p.onSurface); textSize = 16f
             background = null
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
@@ -188,42 +188,40 @@ class MainActivity : Activity() {
         fun matches(repo: String, vararg s: String?) = if (url != null) repo.equals(url, true) else q.isEmpty() || s.any { it?.contains(q, true) == true }
         val out = mutableListOf<Row>()
 
-        if (!pm.canRequestPackageInstalls()) out += Banner("Let Plain APK install apps",
-            "Android asks once. Without it nothing can be installed or updated.", "Allow") {
+        if (!pm.canRequestPackageInstalls()) out += Banner(s(R.string.banner_install_title), s(R.string.banner_install_text), s(R.string.allow)) {
             startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
         }
-        else if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) out += Banner("Turn on notifications",
-            "Only for the rare update Android wants you to confirm. Everything else happens quietly.", "Turn on") {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-        }
+        else if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+            out += Banner(s(R.string.banner_notifications_title), s(R.string.banner_notifications_text), s(R.string.turn_on)) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+            }
         // Android puts apps you rarely open to sleep and then runs their background work about once a day
         else if (!getSystemService(android.os.PowerManager::class.java).isIgnoringBatteryOptimizations(packageName) &&
-            !getSharedPreferences("p", 0).getBoolean("batteryAsked", false)) out += Banner("Check every hour",
-            "Android lets apps you rarely open run only about once a day. Allow Plain APK to run in the background so updates arrive within the hour.",
-            "Allow", { getSharedPreferences("p", 0).edit().putBoolean("batteryAsked", true).apply(); render() }) {
+            !getSharedPreferences("p", 0).getBoolean("batteryAsked", false)) out += Banner(s(R.string.banner_battery_title), s(R.string.banner_battery_text),
+            s(R.string.allow), { getSharedPreferences("p", 0).edit().putBoolean("batteryAsked", true).apply(); render() }) {
             @android.annotation.SuppressLint("BatteryLife") // an updater that must run hourly is the case this exemption exists for
             val i = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
             runCatching { startActivity(i) }
         }
 
         if (url != null && store.find(url) == null && store.catalogue.none { it.repo.equals(url, true) }) {
-            out += Header("Add from ${Forge.host(url)}")
-            out += Item(url.substringAfter("://").substringAfter('/'), "Installs the APK from its latest release and keeps it up to date",
-                null, url.substringAfterLast('/'), "Add", filled = true, onButton = { add(Tracked(url)) })
+            out += Header(s(R.string.add_from, Forge.host(url)))
+            out += Item(url.substringAfter("://").substringAfter('/'), s(R.string.add_text),
+                null, url.substringAfterLast('/'), s(R.string.add), filled = true, onButton = { add(Tracked(url)) })
         }
 
         val apps = store.apps.filter { matches(it.repo, it.name, it.pkg, it.repo) }
         val (updates, others) = apps.partition { newRelease(it) || it.pendingTag != null }
         if (updates.isNotEmpty()) {
             val ready = updates.filter { !Work.busy.containsKey(it.repo) && it.pendingTag == null }
-            out += Header(if (updates.size == 1) "1 update" else "${updates.size} updates", if (ready.size > 1) "Update all" else null) {
+            out += Header(plural(R.plurals.updates_header, updates.size), if (ready.size > 1) s(R.string.update_all) else null) {
                 Work.stopRequested = false
                 Work.run { ready.sortedBy { it.pkg == Store.SELF_PKG }.forEach { Work.check(it, install = true, force = true) } }
             }
             updates.sortedBy { label(it).lowercase() }.forEach { out += appItem(it) }
         }
         if (others.isNotEmpty()) {
-            out += Header("Your apps")
+            out += Header(s(R.string.your_apps))
             others.sortedWith(compareBy({ Work.installed(it.pkg) == null }, { label(it).lowercase() })).forEach { out += appItem(it) }
         }
 
@@ -237,10 +235,10 @@ class MainActivity : Activity() {
         val onPhone = untracked.filter { it.pkg in installed }
         if (onPhone.isNotEmpty()) {
             val ok = onPhone.filter { canUpdate(it) }
-            out += Header("Found on this phone", if (ok.size > 1) "Keep all updated" else null) { ok.forEach { track(it) } }
+            out += Header(s(R.string.found_on_phone), if (ok.size > 1) s(R.string.keep_all_updated) else null) { ok.forEach { track(it) } }
             onPhone.forEach { l ->
-                out += if (canUpdate(l)) Item(l.name, "Updates on ${Forge.host(l.repo)}", icon(l.pkg), l.name, "Keep updated", onButton = { track(l) }, onClick = { listing(l) })
-                else Item(l.name, "Installed from ${installerName(l.pkg)}, signed differently", icon(l.pkg), l.name, "Switch…", onButton = { listing(l) }, onClick = { listing(l) })
+                out += if (canUpdate(l)) Item(l.name, s(R.string.updates_on, Forge.host(l.repo)), icon(l.pkg), l.name, s(R.string.keep_updated), onButton = { track(l) }, onClick = { listing(l) })
+                else Item(l.name, s(R.string.installed_from_signed_differently, installerName(l.pkg)), icon(l.pkg), l.name, s(R.string.switch_button), onButton = { listing(l) }, onClick = { listing(l) })
             }
         }
 
@@ -251,15 +249,15 @@ class MainActivity : Activity() {
         }
         val rest = untracked.filter { it.pkg !in installed && (category == null || category in it.categories) }
         if (rest.isNotEmpty() || store.catalogue.isEmpty() || category != null) {
-            out += Header(if (store.catalogue.size > 100 && q.isEmpty()) "Discover ${store.catalogue.size} apps" else "Discover")
+            out += Header(if (store.catalogue.size > 100 && q.isEmpty()) plural(R.plurals.discover_count, store.catalogue.size) else s(R.string.discover))
             if (topCategories.isNotEmpty() && url == null) out += Chips(topCategories, category)
         }
         if (store.catalogue.isEmpty()) out += Work.catalogueError
-            ?.let { Note("Couldn't load the catalogue", "$it. Tap the refresh button to try again, or paste a repository link above.") }
-            ?: Note("Loading the catalogue…", "You can also paste any GitHub, Forgejo or GitLab link above.")
-        rest.forEach { l -> out += Item(l.name, l.summary.ifEmpty { Forge.host(l.repo) }, null, l.name, "Install", onButton = { track(l) }, onClick = { listing(l) }, listing = l) }
+            ?.let { Note(s(R.string.catalogue_error_title), s(R.string.catalogue_error_text, it)) }
+            ?: Note(s(R.string.catalogue_loading_title), s(R.string.catalogue_loading_text))
+        rest.forEach { l -> out += Item(l.name, l.summary.ifEmpty { Forge.host(l.repo) }, null, l.name, s(R.string.install), onButton = { track(l) }, onClick = { listing(l) }, listing = l) }
 
-        if (out.none { it is Item } && q.isNotEmpty()) out += Note("Nothing called “$q”", "Paste a link to the app's repository to add it.")
+        if (out.none { it is Item } && q.isNotEmpty()) out += Note(s(R.string.nothing_found_title, q), s(R.string.nothing_found_text))
 
         // Rows between headers form one rounded group
         out.forEachIndexed { i, r ->
@@ -273,14 +271,53 @@ class MainActivity : Activity() {
         val busy = Work.busy.isNotEmpty()
         val n = store.apps.count { newRelease(it) }
         status.text = when {
-            busy -> "Checking for updates…"
-            n > 0 -> "$n update${if (n > 1) "s" else ""} available"
-            Work.lastCheck > 0 -> "Everything's up to date · checked ${ago(Work.lastCheck)}"
-            else -> "Keeps your apps fresh from their own releases"
+            busy -> s(R.string.status_checking)
+            n > 0 -> plural(R.plurals.status_updates, n)
+            Work.lastCheck > 0 -> s(R.string.status_up_to_date, ago(this, Work.lastCheck))
+            else -> s(R.string.status_intro)
         }
         refreshButton.isEnabled = !busy
         refreshButton.alpha = if (busy) 0.4f else 1f
     }
+
+    private fun s(id: Int, vararg args: Any): String = getString(id, *args)
+
+    /** A catalogue category in the phone's language when it's one of the common ones. */
+    private fun categoryName(c: String) = categoryNames[c]?.let { s(it) } ?: c
+    private val categoryNames = mapOf(
+        "System" to R.string.cat_system,
+        "Internet" to R.string.cat_internet,
+        "Multimedia" to R.string.cat_multimedia,
+        "Connectivity" to R.string.cat_connectivity,
+        "Science & Education" to R.string.cat_science_education,
+        "Security" to R.string.cat_security,
+        "Sports & Health" to R.string.cat_sports_health,
+        "Writing" to R.string.cat_writing,
+        "Reading" to R.string.cat_reading,
+        "Navigation" to R.string.cat_navigation,
+        "Development" to R.string.cat_development,
+        "Graphics" to R.string.cat_graphics,
+        "Phone & SMS" to R.string.cat_phone_sms,
+        "Messaging" to R.string.cat_messaging,
+        "Note" to R.string.cat_note,
+        "Puzzle Game" to R.string.cat_puzzle_game,
+        "Task" to R.string.cat_task,
+        "Time" to R.string.cat_time,
+        "Finance Manager" to R.string.cat_finance_manager,
+        "Theming" to R.string.cat_theming,
+        "VPN & Proxy" to R.string.cat_vpn_proxy,
+        "Online Media Player" to R.string.cat_online_media_player,
+        "Timer" to R.string.cat_timer,
+        "Office" to R.string.cat_office,
+        "Keyboard & IME" to R.string.cat_keyboard_ime,
+        "Calendar & Agenda" to R.string.cat_calendar_agenda,
+        "Game Helper" to R.string.cat_game_helper,
+        "Launcher" to R.string.cat_launcher,
+        "Password & 2FA" to R.string.cat_password_2fa,
+        "Games" to R.string.cat_games,
+        "Money" to R.string.cat_money,
+    )
+    private fun plural(id: Int, n: Int): String = resources.getQuantityString(id, n, n)
 
     private fun label(t: Tracked) = t.name ?: t.repo.substringAfterLast('/')
 
@@ -289,25 +326,26 @@ class MainActivity : Activity() {
         val busy = Work.busy[t.repo]
         val pct = Work.progress[t.repo]
         val subtitle = when {
-            busy != null && pct != null && pct >= 0 -> "${busy.removeSuffix("…")} · $pct%"
-            busy != null -> busy
+            busy != null && pct != null && pct >= 0 -> s(R.string.busy_percent, busy, pct)
+            busy != null -> "$busy…"
             t.error != null -> t.error!!
-            Work.foreign(t) -> "Installed from ${installerName(t.pkg)}, signed differently than on ${Forge.host(t.repo)}"
-            t.pendingTag != null && t.repo in Work.needsTap -> "${t.pendingTag} is waiting for your OK · tap Update"
-            t.pendingTag != null -> "Installing ${t.pendingTag} once you're not using it"
-            info == null -> "Not installed" + (t.latestTag?.let { " · $it available" } ?: "")
+            Work.foreign(t) -> s(R.string.installed_from_signed_differently_than, installerName(t.pkg), Forge.host(t.repo))
+            t.pendingTag != null && t.repo in Work.needsTap -> s(R.string.waiting_for_ok, t.pendingTag!!)
+            t.pendingTag != null -> s(R.string.installing_when_free, t.pendingTag!!)
+            info == null -> t.latestTag?.let { s(R.string.not_installed_available, it) } ?: s(R.string.not_installed)
             newRelease(t) -> "${info.versionName} → ${t.latestTag}"
             else -> "${info.versionName}"
         }
         val foreign = busy == null && Work.foreign(t)
+        val update = busy == null && !foreign && info != null && (newRelease(t) || t.pendingTag != null)
         val button = when {
             busy != null -> null
-            foreign -> "Switch…"
-            info == null -> "Install"
-            newRelease(t) || t.pendingTag != null -> "Update"
+            foreign -> s(R.string.switch_button)
+            info == null -> s(R.string.install)
+            update -> s(R.string.update)
             else -> null
         }
-        return Item(label(t), subtitle, icon(t.pkg), label(t), button, filled = button == "Update",
+        return Item(label(t), subtitle, icon(t.pkg), label(t), button, filled = update,
             onButton = { if (foreign) sheet(t) else { Work.stopRequested = false; Work.run { Work.check(t, install = true, force = true) } } },
             onClick = { sheet(t) }, progress = if (busy != null && pct != null) pct else null,
             accent = busy == null && t.error == null && newRelease(t), warn = busy == null && t.error != null)
@@ -414,24 +452,24 @@ class MainActivity : Activity() {
         val info = Work.installed(t.pkg)
         sheetHeader(label(t), t.repo.substringAfter("://"), icon(t.pkg))
         val lines = mutableListOf<String>()
-        lines += if (info != null) "Installed: ${info.versionName}" else "Not installed"
-        t.latestTag?.let { lines += "Latest release: $it" + if (t.prerelease) " (pre-releases included)" else "" }
-        if (t.pkg == Store.SELF_PKG) lines += "Plain APK keeps itself up to date too."
+        lines += if (info != null) s(R.string.sheet_installed, info.versionName ?: "") else s(R.string.not_installed)
+        t.latestTag?.let { lines += s(if (t.prerelease) R.string.sheet_latest_pre else R.string.sheet_latest, it) }
+        if (t.pkg == Store.SELF_PKG) lines += s(R.string.sheet_self)
         sheetText(lines.joinToString("\n"))
         val foreign = Work.foreign(t)
         if (foreign) signatures(t.pkg!!, t.signer, Forge.host(t.repo)) else t.error?.let { sheetText(it, p.error) }
         val buttons = mutableListOf<Pair<Pair<String, Boolean>, () -> Unit>>()
-        packageManager.getLaunchIntentForPackage(t.pkg ?: "")?.takeIf { t.pkg != Store.SELF_PKG }?.let { i -> buttons += ("Open" to false) to { d.dismiss(); startActivity(i) } }
-        if (foreign) buttons += ("Switch…" to true) to { d.dismiss(); confirmSwitch(t) }
-        else if (info == null || newRelease(t)) buttons += ((if (info == null) "Install" else "Update") to true) to {
+        packageManager.getLaunchIntentForPackage(t.pkg ?: "")?.takeIf { t.pkg != Store.SELF_PKG }?.let { i -> buttons += (s(R.string.open) to false) to { d.dismiss(); startActivity(i) } }
+        if (foreign) buttons += (s(R.string.switch_button) to true) to { d.dismiss(); confirmSwitch(t) }
+        else if (info == null || newRelease(t)) buttons += (s(if (info == null) R.string.install else R.string.update) to true) to {
             d.dismiss(); Work.stopRequested = false; Work.run { Work.check(t, install = true, force = true) }
         }
         if (buttons.isNotEmpty()) sheetButtons(*buttons.toTypedArray())
-        sheetAction("View source on ${Forge.host(t.repo)}") { d.dismiss(); open(t.repo) }
+        sheetAction(s(R.string.view_source, Forge.host(t.repo))) { d.dismiss(); open(t.repo) }
         addView(LinearLayout(context).apply {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(4), 0, 0, 0)
-            addView(TextView(context).apply { text = "Include pre-releases"; textSize = 16f; setTextColor(p.onSurface) }, LinearLayout.LayoutParams(0, -2, 1f))
+            addView(TextView(context).apply { text = s(R.string.include_prereleases); textSize = 16f; setTextColor(p.onSurface) }, LinearLayout.LayoutParams(0, -2, 1f))
             addView(Switch(context).apply {
                 isChecked = t.prerelease
                 thumbTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(p.onPrimary, p.muted))
@@ -439,14 +477,14 @@ class MainActivity : Activity() {
                 setOnCheckedChangeListener { _, on -> Work.run { t.prerelease = on; t.handledTag = null; Work.store.save(); Work.check(t, install = false) } }
             })
         }, LinearLayout.LayoutParams(-1, dp(52)))
-        if (t.pkg != Store.SELF_PKG) sheetAction("Stop updating this app", p.error) {
+        if (t.pkg != Store.SELF_PKG) sheetAction(s(R.string.stop_updating), p.error) {
             d.dismiss(); Work.run { Work.store.apps.remove(t); Work.store.save() }
         }
     }
 
     /** Who installed [pkg]: "Aurora Store", "Google Play Store", or "a file or adb" when nobody is recorded. */
     private fun installerName(pkg: String?): String {
-        val by = pkg?.let { Work.installerOf(it) } ?: return "a file or adb"
+        val by = pkg?.let { Work.installerOf(it) } ?: return s(R.string.installer_unknown)
         return runCatching { packageManager.getApplicationLabel(packageManager.getApplicationInfo(by, 0)).toString() }.getOrDefault(by)
     }
 
@@ -454,16 +492,16 @@ class MainActivity : Activity() {
     private fun LinearLayout.signatures(pkg: String, expected: String?, host: String) {
         val have = Work.certs(Work.installed(pkg)?.signingInfo)
         fun short(h: String) = h.take(16).chunked(2).joinToString(":").uppercase() + "…"
-        sheetText("Installed from: ${installerName(pkg)}\nSigned by: ${have.joinToString { short(it) }}\n$host releases signed by: ${expected?.let { short(it) } ?: "unknown"}")
+        sheetText(s(R.string.signatures, installerName(pkg), have.joinToString { short(it) }, host, expected?.let { short(it) } ?: s(R.string.unknown)))
     }
 
     private fun confirmSwitch(t: Tracked) = bottomSheet { d ->
         val name = label(t)
         val host = Forge.host(t.repo)
-        sheetHeader("Switch $name to $host?", t.repo.substringAfter("://"), icon(t.pkg))
-        sheetText("Plain APK downloads and checks the $host version first. Then Android asks you to uninstall $name, and to install the new one. From then on it updates on its own.")
-        sheetText("Uninstalling deletes everything $name keeps on this phone: accounts, settings, keys and downloads. If any of that matters, back it up or export it inside $name before you continue.", p.error)
-        sheetButtons(("Cancel" to false) to { d.dismiss() }, ("Uninstall and reinstall" to true) to {
+        sheetHeader(s(R.string.switch_title, name, host), t.repo.substringAfter("://"), icon(t.pkg))
+        sheetText(s(R.string.switch_steps, name, host))
+        sheetText(s(R.string.switch_warning, name), p.error)
+        sheetButtons((s(R.string.cancel) to false) to { d.dismiss() }, (s(R.string.switch_confirm) to true) to {
             d.dismiss(); Work.stopRequested = false; Work.run { Work.switchSource(t) }
         })
     }
@@ -473,17 +511,17 @@ class MainActivity : Activity() {
         sheetHeader(l.name, l.repo.substringAfter("://"), icon(l.pkg) ?: icons.get(l))
         if (l.summary.isNotEmpty()) sheetText(l.summary, p.onSurface)
         sheetText(when {
-            !here -> "Plain APK installs the APK from the latest release on ${Forge.host(l.repo)} and keeps it up to date."
-            canUpdate(l) -> "Already on this phone and signed by the same developer, so Plain APK can keep it up to date."
-            else -> "The copy on this phone came from ${installerName(l.pkg)} and is signed with a different key than the developer's releases on ${Forge.host(l.repo)} (Play builds often are), so Android won't let one update the other."
+            !here -> s(R.string.listing_install, Forge.host(l.repo))
+            canUpdate(l) -> s(R.string.listing_can_update)
+            else -> s(R.string.listing_signed_differently, installerName(l.pkg), Forge.host(l.repo))
         })
         if (here && !canUpdate(l)) signatures(l.pkg, l.signer, Forge.host(l.repo))
         val buttons = mutableListOf<Pair<Pair<String, Boolean>, () -> Unit>>()
-        if (!here) buttons += ("Install" to true) to { d.dismiss(); track(l) }
-        else if (canUpdate(l)) buttons += ("Keep updated" to true) to { d.dismiss(); track(l) }
-        else buttons += ("Switch…" to true) to { d.dismiss(); confirmSwitch(Tracked(l.repo, l.pkg, l.name, asset = l.asset, signer = l.signer)) }
+        if (!here) buttons += (s(R.string.install) to true) to { d.dismiss(); track(l) }
+        else if (canUpdate(l)) buttons += (s(R.string.keep_updated) to true) to { d.dismiss(); track(l) }
+        else buttons += (s(R.string.switch_button) to true) to { d.dismiss(); confirmSwitch(Tracked(l.repo, l.pkg, l.name, asset = l.asset, signer = l.signer)) }
         if (buttons.isNotEmpty()) sheetButtons(*buttons.toTypedArray())
-        sheetAction("View source on ${Forge.host(l.repo)}") { d.dismiss(); open(l.repo) }
+        sheetAction(s(R.string.view_source, Forge.host(l.repo))) { d.dismiss(); open(l.repo) }
     }
 
     private fun letter(seed: String): Drawable {
@@ -592,7 +630,7 @@ class MainActivity : Activity() {
                     addView(LinearLayout(context).apply {
                         gravity = Gravity.END
                         addView(TextView(context).apply {
-                            text = "Not now"; textSize = 14f; setTextColor(p.onPrimaryContainer); gravity = Gravity.CENTER
+                            text = s(R.string.not_now); textSize = 14f; setTextColor(p.onPrimaryContainer); gravity = Gravity.CENTER
                             minHeight = dp(40); setPadding(dp(16), 0, dp(16), 0); background = ripple(p, rounded(0, dp(20f)))
                         })
                         addView(context.pill(p, true), LinearLayout.LayoutParams(-2, -2).apply { marginStart = dp(8) })
@@ -622,7 +660,7 @@ class MainActivity : Activity() {
             row.removeAllViews()
             (listOf<String?>(null) + r.names).forEach { name ->
                 row.addView(pill(p, name == r.selected).apply {
-                    text = name ?: "All"
+                    text = name?.let { categoryName(it) } ?: s(R.string.all_categories)
                     minHeight = dp(36)
                     setOnClickListener { category = name; render() }
                 }, LinearLayout.LayoutParams(-2, -2).apply { marginEnd = dp(8) })

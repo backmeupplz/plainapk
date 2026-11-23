@@ -88,12 +88,13 @@ class LetterDrawable(private val letter: String, private val bg: Int, fg: Int) :
     @Deprecated("Deprecated in Java") override fun getOpacity() = PixelFormat.TRANSLUCENT
 }
 
-fun ago(ms: Long): String {
-    val m = (System.currentTimeMillis() - ms) / 60_000
+fun ago(c: Context, ms: Long): String {
+    val m = ((System.currentTimeMillis() - ms) / 60_000).toInt()
+    fun q(id: Int, n: Int) = c.resources.getQuantityString(id, n, n)
     return when {
-        m < 1 -> "just now"
-        m < 60 -> "$m min ago"
-        m < 48 * 60 -> "${m / 60} h ago"
-        else -> "${m / 1440} days ago"
+        m < 1 -> c.getString(R.string.just_now)
+        m < 60 -> q(R.plurals.minutes_ago, m)
+        m < 48 * 60 -> q(R.plurals.hours_ago, m / 60)
+        else -> q(R.plurals.days_ago, m / 1440)
     }
 }

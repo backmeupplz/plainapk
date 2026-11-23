@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand name: keep "Plain APK" untranslated everywhere -->
+    <string name="app_name" translatable="false">Plain APK</string>
+
+    <!-- Top of the screen -->
+    <string name="check_for_updates">Check for updates</string>
+    <string name="clear">Clear</string>
+    <string name="search_hint">Search, or paste a repository link</string>
+    <string name="status_checking">Checking for updates…</string>
+    <plurals name="status_updates">
+        <item quantity="one">%d update available</item>
+        <item quantity="other">%d updates available</item>
+    </plurals>
+    <!-- %s is how long ago, e.g. "5 min ago" -->
+    <string name="status_up_to_date">Everything\'s up to date · checked %s</string>
+    <string name="status_intro">Keeps your apps fresh from their own releases</string>
+
+    <!-- Permission banners -->
+    <string name="banner_install_title">Let Plain APK install apps</string>
+    <string name="banner_install_text">Android asks once. Without it nothing can be installed or updated.</string>
+    <string name="banner_notifications_title">Turn on notifications</string>
+    <string name="banner_notifications_text">Only for the rare update Android wants you to confirm. Everything else happens quietly.</string>
+    <string name="banner_battery_title">Check every hour</string>
+    <string name="banner_battery_text">Android lets apps you rarely open run only about once a day. Allow Plain APK to run in the background so updates arrive within the hour.</string>
+    <string name="allow">Allow</string>
+    <string name="turn_on">Turn on</string>
+    <string name="not_now">Not now</string>
+
+    <!-- Sections. %s is a host like github.com -->
+    <string name="add_from">Add from %s</string>
+    <string name="add_text">Installs the APK from its latest release and keeps it up to date</string>
+    <plurals name="updates_header">
+        <item quantity="one">%d update</item>
+        <item quantity="other">%d updates</item>
+    </plurals>
+    <string name="your_apps">Your apps</string>
+    <string name="found_on_phone">Found on this phone</string>
+    <string name="discover">Discover</string>
+    <plurals name="discover_count">
+        <item quantity="one">Discover %d app</item>
+        <item quantity="other">Discover %d apps</item>
+    </plurals>
+    <string name="all_categories">All</string>
+    <string name="catalogue_error_title">Couldn\'t load the catalogue</string>
+    <!-- %s is the error message -->
+    <string name="catalogue_error_text">%s. Tap the refresh button to try again, or paste a repository link above.</string>
+    <string name="catalogue_loading_title">Loading the catalogue…</string>
+    <string name="catalogue_loading_text">You can also paste any GitHub, Forgejo or GitLab link above.</string>
+    <!-- %s is what the user typed -->
+    <string name="nothing_found_title">Nothing called “%s”</string>
+    <string name="nothing_found_text">Paste a link to the app\'s repository to add it.</string>
+
+    <!-- Buttons -->
+    <string name="add">Add</string>
+    <string name="install">Install</string>
+    <string name="update">Update</string>
+    <string name="update_all">Update all</string>
+    <string name="keep_updated">Keep updated</string>
+    <string name="keep_all_updated">Keep all updated</string>
+    <string name="switch_button">Switch…</string>
+    <string name="open">Open</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Row subtitles. %1$s host like github.com; %s installer name like "Aurora Store"; tags look like v1.2.3 -->
+    <string name="updates_on">Updates on %s</string>
+    <string name="installed_from_signed_differently">Installed from %s, signed differently</string>
+    <string name="installed_from_signed_differently_than">Installed from %1$s, signed differently than on %2$s</string>
+    <string name="waiting_for_ok">%s is waiting for your OK · tap Update</string>
+    <string name="installing_when_free">Installing %s once you\'re not using it</string>
+    <string name="not_installed">Not installed</string>
+    <string name="not_installed_available">Not installed · %s available</string>
+    <!-- %1$s busy text like "Downloading v1.2", %2$d percent -->
+    <string name="busy_percent">%1$s · %2$d%%</string>
+    <string name="installer_unknown">a file or adb</string>
+
+    <!-- App sheet -->
+    <string name="sheet_installed">Installed: %s</string>
+    <string name="sheet_latest">Latest release: %s</string>
+    <string name="sheet_latest_pre">Latest release: %s (pre-releases included)</string>
+    <string name="sheet_self">Plain APK keeps itself up to date too.</string>
+    <string name="view_source">View source on %s</string>
+    <string name="include_prereleases">Include pre-releases</string>
+    <string name="stop_updating">Stop updating this app</string>
+    <!-- %1$s installer, %2$s fingerprint, %3$s host, %4$s fingerprint -->
+    <string name="signatures">Installed from: %1$s\nSigned by: %2$s\n%3$s releases signed by: %4$s</string>
+    <string name="unknown">unknown</string>
+
+    <!-- Catalogue sheet. %s is a host like github.com, %1$s installer name -->
+    <string name="listing_install">Plain APK installs the APK from the latest release on %s and keeps it up to date.</string>
+    <string name="listing_can_update">Already on this phone and signed by the same developer, so Plain APK can keep it up to date.</string>
+    <string name="listing_signed_differently">The copy on this phone came from %1$s and is signed with a different key than the developer\'s releases on %2$s (Play builds often are), so Android won\'t let one update the other.</string>
+
+    <!-- Switching an app to its repository's build. %1$s app name, %2$s host -->
+    <string name="switch_title">Switch %1$s to %2$s?</string>
+    <string name="switch_steps">Plain APK downloads and checks the %2$s version first. Then Android asks you to uninstall %1$s, and to install the new one. From then on it updates on its own.</string>
+    <string name="switch_warning">Uninstalling deletes everything %1$s keeps on this phone: accounts, settings, keys and downloads. If any of that matters, back it up or export it inside %1$s before you continue.</string>
+    <string name="switch_confirm">Uninstall and reinstall</string>
+
+    <!-- Work in progress and errors. %s is a release tag like v1.2.3 or a file name -->
+    <string name="checking">Checking</string>
+    <string name="downloading">Downloading %s</string>
+    <string name="installing">Installing %s</string>
+    <string name="waiting_uninstall">Waiting for you to confirm the uninstall</string>
+    <string name="no_apk">No APK for this phone in %s</string>
+    <string name="not_valid_apk">%s isn\'t a valid APK</string>
+    <string name="not_signed">%s isn\'t signed</string>
+    <!-- %1$s file, %2$s package it contains, %3$s package expected -->
+    <string name="wrong_package">%1$s is %2$s, not %3$s</string>
+    <string name="different_key">Signed with a different key than before</string>
+    <string name="not_catalogue_key">%s isn\'t signed with the key the catalogue lists</string>
+    <string name="not_uninstalled">Not uninstalled, so nothing changed</string>
+    <string name="install_failed">Install failed</string>
+
+    <!-- Notification -->
+    <string name="channel_updates">Updates that need you</string>
+    <string name="notify_title">Tap to update %s</string>
+    <string name="notify_text">Android wants you to confirm this one; later updates are automatic.</string>
+
+    <!-- Catalogue categories (from F-Droid and IzzyOnDroid), shown as filter chips -->
+    <string name="cat_system">System</string>
+    <string name="cat_internet">Internet</string>
+    <string name="cat_multimedia">Multimedia</string>
+    <string name="cat_connectivity">Connectivity</string>
+    <string name="cat_science_education">Science &amp; Education</string>
+    <string name="cat_security">Security</string>
+    <string name="cat_sports_health">Sports &amp; Health</string>
+    <string name="cat_writing">Writing</string>
+    <string name="cat_reading">Reading</string>
+    <string name="cat_navigation">Navigation</string>
+    <string name="cat_development">Development</string>
+    <string name="cat_graphics">Graphics</string>
+    <string name="cat_phone_sms">Phone &amp; SMS</string>
+    <string name="cat_messaging">Messaging</string>
+    <string name="cat_note">Note</string>
+    <string name="cat_puzzle_game">Puzzle Game</string>
+    <string name="cat_task">Task</string>
+    <string name="cat_time">Time</string>
+    <string name="cat_finance_manager">Finance Manager</string>
+    <string name="cat_theming">Theming</string>
+    <string name="cat_vpn_proxy">VPN &amp; Proxy</string>
+    <string name="cat_online_media_player">Online Media Player</string>
+    <string name="cat_timer">Timer</string>
+    <string name="cat_office">Office</string>
+    <string name="cat_keyboard_ime">Keyboard &amp; IME</string>
+    <string name="cat_calendar_agenda">Calendar &amp; Agenda</string>
+    <string name="cat_game_helper">Game Helper</string>
+    <string name="cat_launcher">Launcher</string>
+    <string name="cat_password_2fa">Password &amp; 2FA</string>
+    <string name="cat_games">Games</string>
+    <string name="cat_money">Money</string>
+
+    <!-- How long ago -->
+    <string name="just_now">just now</string>
+    <plurals name="minutes_ago">
+        <item quantity="one">%d min ago</item>
+        <item quantity="other">%d min ago</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">%d h ago</item>
+        <item quantity="other">%d h ago</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+</resources>
