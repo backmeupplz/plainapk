@@ -574,7 +574,13 @@ class MainActivity : Activity() {
                     gravity = Gravity.CENTER_VERTICAL
                     minimumHeight = dp(76)
                     setPadding(dp(16), dp(12), dp(12), dp(12))
-                    addView(ImageView(context), LinearLayout.LayoutParams(dp(44), dp(44)))
+                    // Catalogue icons are plain squares, so round them like the launcher's
+                    addView(ImageView(context).apply {
+                        outlineProvider = object : android.view.ViewOutlineProvider() {
+                            override fun getOutline(v: View, o: android.graphics.Outline) = o.setRoundRect(0, 0, v.width, v.height, v.width * 0.28f)
+                        }
+                        clipToOutline = true
+                    }, LinearLayout.LayoutParams(dp(44), dp(44)))
                     addView(LinearLayout(context).apply {
                         orientation = LinearLayout.VERTICAL
                         setPadding(dp(16), 0, dp(8), 0)
