@@ -259,8 +259,9 @@ object Work {
             PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         ).intentSender
         t.pendingTag = tag; t.pendingCode = code; store.save()
-        // Android 14+: wait until the app isn't in use, but only works for apps we already install (else it throws)
-        val mine = pkg == Store.SELF_PKG || installerOf(pkg) == ctx.packageName
+        // Android 14+: wait until the app isn't in use, but only works for apps we already install (else it throws).
+        // Not for ourselves: our own process counts as in use while it runs the check, so the wait could last hours.
+        val mine = pkg != Store.SELF_PKG && installerOf(pkg) == ctx.packageName
         if (gentle && mine && Build.VERSION.SDK_INT >= 34) {
             try {
                 pi.commitSessionAfterInstallConstraintsAreMet(id, status, PackageInstaller.InstallConstraints.GENTLE_UPDATE, 6 * 3600_000L)
