@@ -202,6 +202,28 @@ def github_releases(paths):
     return out
 
 
+def gitlab_releases(paths):
+    """group/project → (path, tag, assets) for the newest release, 50 projects per GraphQL query (anonymous REST is rate-limited hard)."""
+    out, paths = {}, sorted(set(paths))
+    for i in range(0, len(paths), 50):
+        chunk = paths[i:i + 50]
+        q = ("query($p:[String!]){projects(fullPaths:$p,first:50){nodes{fullPath archived "
+             "releases(first:1,sort:RELEASED_AT_DESC){nodes{tagName assets{links{nodes{name directAssetUrl url}}}}}}}}")
+        try:
+            _, _, body = http("https://gitlab.com/api/graphql", {"Content-Type": "application/json"}, json.dumps({"query": q, "variables": {"p": chunk}}).encode())
+        except Exception as e:
+            log(f"  gitlab batch {i}: {e}")
+            continue
+        for node in (json.loads(body).get("data") or {}).get("projects", {}).get("nodes", []):
+            rels = node["releases"]["nodes"]
+            if rels and not node["archived"]:
+                links = rels[0]["assets"]["links"]["nodes"]
+                out[node["fullPath"].lower()] = (node["fullPath"], rels[0]["tagName"], [(l["name"], l.get("directAssetUrl") or l["url"], None) for l in links])
+        log(f"gitlab {min(i + 50, len(paths))}/{len(paths)}")
+        time.sleep(2)
+    return out
+
+
 def forge_release(repo):
     u = urllib.parse.urlparse(repo)
     path = u.path.strip("/")
@@ -267,13 +289,13 @@ def main():
     gh = github_releases([urllib.parse.urlparse(r).path.strip("/") for r, _, _ in candidates if "github.com/" in r])
     others = [r for r, _, _ in candidates if "github.com/" not in r]
     gitlab = [r for r in others if "gitlab.com/" in r]
+    forgejo = [r for r in others if r not in gitlab]
     with concurrent.futures.ThreadPoolExecutor(6) as pool:
-        fr = dict(zip([r for r in others if r not in gitlab], pool.map(lambda r: _try(forge_release, r), [r for r in others if r not in gitlab])))
-    for i, r in enumerate(gitlab):  # gitlab.com rate-limits anonymous API calls hard, so one at a time
-        fr[r] = _try(forge_release, r)
-        time.sleep(0.7)
-        if i % 100 == 0:
-            log(f"gitlab {i}/{len(gitlab)}")
+        fr = dict(zip(forgejo, pool.map(lambda r: _try(forge_release, r), forgejo)))
+    if "--skip-gitlab" not in sys.argv:
+        gl = gitlab_releases([urllib.parse.urlparse(r).path.strip("/") for r in gitlab])
+        for r in gitlab:
+            fr[r] = gl.get(urllib.parse.urlparse(r).path.strip("/").lower())
 
     def resolve(item):
         repo, glob_pattern, meta = item
@@ -295,7 +317,7 @@ def main():
         pkg, signer = cache[url]
         if not signer or (meta and pkg != meta["id"]):
             return None  # the release's APK isn't this app (another flavor or package), or it isn't v2/v3 signed
-        entry = dict(meta) if meta else {"id": pkg, "name": pkg, "summary": "", "categories": [], "updated": 0, "icon": None}
+        entry = dict(meta) if meta else {"id": pkg, "name": None, "summary": "", "categories": [], "updated": 0, "icon": None}
         entry.update(repo=canonical, signer=signer)
         if glob_pattern:
             entry["asset"] = glob_pattern
@@ -312,7 +334,7 @@ def main():
     final = sorted(listed.values(), key=lambda a: -a.get("updated", 0))
     for e in final:
         e["icon"] = f"icons/{e['id']}.webp" if os.path.exists(os.path.join(out_dir, "icons", e["id"] + ".webp")) else None
-        e = {k: v for k, v in e.items() if v not in (None, "", [])}
+        e["name"] = e.get("name") or e["repo"].rsplit("/", 1)[-1]  # listed by hand and in no index
     with open(os.path.join(out_dir, "index.json"), "w") as f:
         json.dump({"version": 2, "generated": int(time.time() * 1000),
                    "apps": [{k: v for k, v in e.items() if v not in (None, "", [])} for e in final]}, f, ensure_ascii=False, separators=(",", ":"))
@@ -328,17 +350,29 @@ def _try(fn, *a):
 
 
 def _icons(entries, folder):
+    """Mirrors missing icons. A host that keeps failing (the index servers block bursts) is left for the next night."""
     from PIL import Image
+    failures = {}
     def one(e):
         target = os.path.join(folder, e["id"] + ".webp")
-        if os.path.exists(target) or not e.get("icon"):
+        host = urllib.parse.urlparse(e.get("icon") or "").netloc
+        if os.path.exists(target) or not host or failures.get(host, 0) >= 20:
             return
-        try:
-            _, _, body = http(e["icon"])
-            Image.open(io.BytesIO(body)).convert("RGBA").resize((96, 96), Image.LANCZOS).save(target, "WEBP", quality=82)
-        except Exception as ex:
-            log(f"  icon {e['id']}: {ex}")
-    with concurrent.futures.ThreadPoolExecutor(16) as pool:
+        for attempt in range(3):
+            try:
+                _, _, body = http(e["icon"], timeout=20)
+                Image.open(io.BytesIO(body)).convert("RGBA").resize((96, 96), Image.LANCZOS).save(target, "WEBP", quality=82)
+                failures[host] = 0
+                return
+            except (urllib.error.URLError, TimeoutError) as ex:
+                if attempt == 2:
+                    failures[host] = failures.get(host, 0) + 1
+                    log(f"  icon {e['id']}: {ex}")
+                time.sleep(3 * (attempt + 1))
+            except Exception as ex:
+                log(f"  icon {e['id']}: {ex}")
+                return
+    with concurrent.futures.ThreadPoolExecutor(4) as pool:
         list(pool.map(one, list(entries)))
 
 
