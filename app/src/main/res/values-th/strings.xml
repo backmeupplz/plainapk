@@ -40,7 +40,7 @@
     <string name="update_all">อัปเดตทั้งหมด</string>
     <string name="keep_updated">อัปเดตอัตโนมัติ</string>
     <string name="keep_all_updated">อัปเดตทั้งหมดอัตโนมัติ</string>
-    <string name="switch_button">เปลี่ยน…</string>
+    <string name="switch_button">ติดตั้งใหม่…</string>
     <string name="open">เปิด</string>
     <string name="cancel">ยกเลิก</string>
     <string name="updates_on">อัปเดตจาก %s</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK ติดตั้ง APK จากรุ่นล่าสุดบน %s และอัปเดตให้อยู่เสมอ</string>
     <string name="listing_can_update">มีในโทรศัพท์เครื่องนี้แล้วและลงนามโดยนักพัฒนาคนเดียวกัน Plain APK จึงอัปเดตให้ได้</string>
     <string name="listing_signed_differently">ตัวที่อยู่ในโทรศัพท์เครื่องนี้มาจาก %1$s และลงนามด้วยคีย์ต่างจากรุ่นของนักพัฒนาบน %2$s (บิลด์จาก Play มักเป็นแบบนี้) Android จึงไม่ให้ตัวหนึ่งอัปเดตทับอีกตัว</string>
-    <string name="switch_title">เปลี่ยน %1$s ไปใช้รุ่นจาก %2$s ไหม</string>
+    <string name="switch_title">ติดตั้ง %1$s ใหม่จาก %2$s ไหม</string>
     <string name="switch_steps">Plain APK จะดาวน์โหลดและตรวจสอบรุ่นจาก %2$s ก่อน จากนั้น Android จะให้คุณถอนการติดตั้ง %1$s แล้วติดตั้งตัวใหม่ หลังจากนั้นแอปจะอัปเดตเอง</string>
     <string name="switch_warning">การถอนการติดตั้งจะลบทุกอย่างที่ %1$s เก็บไว้ในโทรศัพท์เครื่องนี้ ทั้งบัญชี การตั้งค่า คีย์ และไฟล์ดาวน์โหลด หากมีอะไรสำคัญ โปรดสำรองหรือส่งออกใน %1$s ก่อนดำเนินการต่อ</string>
     <string name="switch_confirm">ถอนการติดตั้งและติดตั้งใหม่</string>

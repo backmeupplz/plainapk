@@ -43,7 +43,7 @@
     <string name="update_all">Tümünü güncelle</string>
     <string name="keep_updated">Güncel tut</string>
     <string name="keep_all_updated">Tümünü güncel tut</string>
-    <string name="switch_button">Geç…</string>
+    <string name="switch_button">Yeniden yükle…</string>
     <string name="open">Aç</string>
     <string name="cancel">İptal</string>
     <string name="updates_on">Güncellemeler: %s</string>
@@ -67,7 +67,7 @@
     <string name="listing_install">Plain APK, APK\'yı %s üzerindeki en son sürümden yükler ve güncel tutar.</string>
     <string name="listing_can_update">Zaten bu telefonda ve aynı geliştirici tarafından imzalanmış, bu yüzden Plain APK onu güncel tutabilir.</string>
     <string name="listing_signed_differently">Bu telefondaki kopya %1$s kaynağından geldi ve geliştiricinin %2$s üzerindeki sürümlerinden farklı bir anahtarla imzalanmış (Play sürümleri sık sık böyledir), bu yüzden Android birinin diğerini güncellemesine izin vermez.</string>
-    <string name="switch_title">%1$s, %2$s sürümüne geçirilsin mi?</string>
+    <string name="switch_title">%1$s, %2$s üzerinden yeniden yüklensin mi?</string>
     <string name="switch_steps">Plain APK önce %2$s sürümünü indirip denetler. Ardından Android senden %1$s uygulamasını kaldırmanı ve yenisini yüklemeni ister. Bundan sonra kendi kendine güncellenir.</string>
     <string name="switch_warning">Kaldırma işlemi, %1$s uygulamasının bu telefonda sakladığı her şeyi siler: hesaplar, ayarlar, anahtarlar ve indirmeler. Bunlardan biri önemliyse devam etmeden önce yedekle veya %1$s içinden dışa aktar.</string>
     <string name="switch_confirm">Kaldır ve yeniden yükle</string>

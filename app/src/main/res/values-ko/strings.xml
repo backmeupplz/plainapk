@@ -40,7 +40,7 @@
     <string name="update_all">모두 업데이트</string>
     <string name="keep_updated">최신 유지</string>
     <string name="keep_all_updated">모두 최신 유지</string>
-    <string name="switch_button">전환…</string>
+    <string name="switch_button">다시 설치…</string>
     <string name="open">열기</string>
     <string name="cancel">취소</string>
     <string name="updates_on">%s에서 업데이트</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK는 %s의 최신 릴리스에서 APK를 설치하고 최신 상태로 유지합니다.</string>
     <string name="listing_can_update">이미 이 휴대전화에 있고 같은 개발자가 서명했으므로 Plain APK가 최신 상태로 유지할 수 있습니다.</string>
     <string name="listing_signed_differently">이 휴대전화의 앱은 %1$s에서 설치되었고 %2$s의 개발자 릴리스와 다른 키로 서명되어 있습니다(Play 빌드는 대개 그렇습니다). 그래서 Android는 서로를 업데이트하지 못하게 합니다.</string>
-    <string name="switch_title">%1$s을(를) %2$s 버전으로 전환할까요?</string>
+    <string name="switch_title">%2$s에서 %1$s을(를) 다시 설치할까요?</string>
     <string name="switch_steps">Plain APK가 먼저 %2$s 버전을 내려받아 확인합니다. 그다음 Android가 %1$s 삭제와 새 버전 설치를 요청합니다. 이후에는 자동으로 업데이트됩니다.</string>
     <string name="switch_warning">삭제하면 %1$s이(가) 이 휴대전화에 저장한 모든 항목(계정, 설정, 키, 다운로드)이 지워집니다. 중요한 것이 있다면 계속하기 전에 %1$s에서 백업하거나 내보내세요.</string>
     <string name="switch_confirm">삭제 후 다시 설치</string>

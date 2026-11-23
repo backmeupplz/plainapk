@@ -43,7 +43,7 @@
     <string name="update_all">सभी अपडेट करें</string>
     <string name="keep_updated">अपडेट रखें</string>
     <string name="keep_all_updated">सभी को अपडेट रखें</string>
-    <string name="switch_button">बदलें…</string>
+    <string name="switch_button">दोबारा इंस्टॉल…</string>
     <string name="open">खोलें</string>
     <string name="cancel">रद्द करें</string>
     <string name="updates_on">%s से अपडेट</string>
@@ -67,7 +67,7 @@
     <string name="listing_install">Plain APK, %s पर नवीनतम रिलीज़ से APK इंस्टॉल करता है और उसे अपडेट रखता है।</string>
     <string name="listing_can_update">यह पहले से इस फ़ोन पर है और उसी डेवलपर के हस्ताक्षर वाला है, इसलिए Plain APK इसे अपडेट रख सकता है।</string>
     <string name="listing_signed_differently">इस फ़ोन की कॉपी %1$s से आई है और उस पर डेवलपर की %2$s वाली रिलीज़ से अलग कुंजी से हस्ताक्षर हैं (Play के बिल्ड अक्सर ऐसे होते हैं), इसलिए Android एक को दूसरे से अपडेट नहीं होने देता।</string>
-    <string name="switch_title">%1$s को %2$s वाले संस्करण पर ले जाएँ?</string>
+    <string name="switch_title">%1$s को %2$s से दोबारा इंस्टॉल करें?</string>
     <string name="switch_steps">Plain APK पहले %2$s वाला संस्करण डाउनलोड करके जाँचता है। फिर Android आपसे %1$s अनइंस्टॉल करने और नया इंस्टॉल करने को कहता है। उसके बाद यह अपने आप अपडेट होता है।</string>
     <string name="switch_warning">अनइंस्टॉल करने पर %1$s इस फ़ोन पर जो कुछ रखता है वह मिट जाता है: अकाउंट, सेटिंग, कुंजियाँ और डाउनलोड। इनमें से कुछ भी ज़रूरी हो, तो आगे बढ़ने से पहले उसका बैकअप लें या %1$s में उसे एक्सपोर्ट करें।</string>
     <string name="switch_confirm">अनइंस्टॉल करके दोबारा इंस्टॉल करें</string>

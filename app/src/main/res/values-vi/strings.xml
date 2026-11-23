@@ -40,7 +40,7 @@
     <string name="update_all">Cập nhật tất cả</string>
     <string name="keep_updated">Luôn cập nhật</string>
     <string name="keep_all_updated">Luôn cập nhật tất cả</string>
-    <string name="switch_button">Chuyển…</string>
+    <string name="switch_button">Cài lại…</string>
     <string name="open">Mở</string>
     <string name="cancel">Hủy</string>
     <string name="updates_on">Cập nhật từ %s</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK cài APK từ bản phát hành mới nhất trên %s và luôn cập nhật cho bạn.</string>
     <string name="listing_can_update">Đã có trên điện thoại này và được ký bởi cùng nhà phát triển, nên Plain APK có thể giữ nó luôn mới.</string>
     <string name="listing_signed_differently">Bản trên điện thoại này đến từ %1$s và được ký bằng khóa khác với các bản phát hành của nhà phát triển trên %2$s (bản Play thường như vậy), nên Android không cho bản này cập nhật bản kia.</string>
-    <string name="switch_title">Chuyển %1$s sang bản của %2$s?</string>
+    <string name="switch_title">Cài lại %1$s từ %2$s?</string>
     <string name="switch_steps">Plain APK tải và kiểm tra bản của %2$s trước. Sau đó Android sẽ yêu cầu bạn gỡ %1$s và cài bản mới. Từ đó nó sẽ tự cập nhật.</string>
     <string name="switch_warning">Gỡ cài đặt sẽ xóa mọi thứ %1$s lưu trên điện thoại này: tài khoản, cài đặt, khóa và các tệp đã tải. Nếu có gì quan trọng, hãy sao lưu hoặc xuất trong %1$s trước khi tiếp tục.</string>
     <string name="switch_confirm">Gỡ và cài lại</string>

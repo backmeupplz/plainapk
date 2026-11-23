@@ -56,7 +56,7 @@
     <string name="update_all">Update all</string>
     <string name="keep_updated">Keep updated</string>
     <string name="keep_all_updated">Keep all updated</string>
-    <string name="switch_button">Switch…</string>
+    <string name="switch_button">Reinstall…</string>
     <string name="open">Open</string>
     <string name="cancel">Cancel</string>
 
@@ -90,7 +90,7 @@
     <string name="listing_signed_differently">The copy on this phone came from %1$s and is signed with a different key than the developer\'s releases on %2$s (Play builds often are), so Android won\'t let one update the other.</string>
 
     <!-- Switching an app to its repository's build. %1$s app name, %2$s host -->
-    <string name="switch_title">Switch %1$s to %2$s?</string>
+    <string name="switch_title">Reinstall %1$s from %2$s?</string>
     <string name="switch_steps">Plain APK downloads and checks the %2$s version first. Then Android asks you to uninstall %1$s, and to install the new one. From then on it updates on its own.</string>
     <string name="switch_warning">Uninstalling deletes everything %1$s keeps on this phone: accounts, settings, keys and downloads. If any of that matters, back it up or export it inside %1$s before you continue.</string>
     <string name="switch_confirm">Uninstall and reinstall</string>

@@ -55,7 +55,7 @@
     <string name="update_all">تحديث الكل</string>
     <string name="keep_updated">إبقاء محدَّثًا</string>
     <string name="keep_all_updated">إبقاء الكل محدَّثًا</string>
-    <string name="switch_button">تبديل…</string>
+    <string name="switch_button">إعادة التثبيت…</string>
     <string name="open">فتح</string>
     <string name="cancel">إلغاء</string>
     <string name="updates_on">التحديثات من %s</string>
@@ -79,7 +79,7 @@
     <string name="listing_install">يثبّت Plain APK ملف APK من أحدث إصدار على %s ويُبقيه محدَّثًا.</string>
     <string name="listing_can_update">موجود بالفعل على هذا الهاتف وموقَّع من المطوّر نفسه، لذا يستطيع Plain APK إبقاءه محدَّثًا.</string>
     <string name="listing_signed_differently">النسخة الموجودة على هذا الهاتف جاءت من %1$s وموقَّعة بمفتاح مختلف عن مفتاح إصدارات المطوّر على %2$s (وهذا شائع في نسخ Play)، لذا لا يسمح Android بأن تحدّث إحداهما الأخرى.</string>
-    <string name="switch_title">تحويل %1$s إلى نسخة %2$s؟</string>
+    <string name="switch_title">إعادة تثبيت %1$s من %2$s؟</string>
     <string name="switch_steps">ينزّل Plain APK نسخة %2$s ويتحقق منها أولًا. ثم يطلب منك Android إلغاء تثبيت %1$s وتثبيت النسخة الجديدة. وبعد ذلك تتحدّث تلقائيًا.</string>
     <string name="switch_warning">يؤدي إلغاء التثبيت إلى حذف كل ما يحفظه %1$s على هذا الهاتف: الحسابات والإعدادات والمفاتيح والتنزيلات. إذا كان أي منها مهمًا، فانسخه احتياطيًا أو صدّره من داخل %1$s قبل المتابعة.</string>
     <string name="switch_confirm">إلغاء التثبيت وإعادته</string>

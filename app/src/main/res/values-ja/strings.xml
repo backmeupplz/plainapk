@@ -40,7 +40,7 @@
     <string name="update_all">すべてアップデート</string>
     <string name="keep_updated">最新に保つ</string>
     <string name="keep_all_updated">すべて最新に保つ</string>
-    <string name="switch_button">切り替え…</string>
+    <string name="switch_button">再インストール…</string>
     <string name="open">開く</string>
     <string name="cancel">キャンセル</string>
     <string name="updates_on">%s からアップデート</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK は %s の最新リリースから APK をインストールし、最新の状態に保ちます。</string>
     <string name="listing_can_update">すでにこの端末にあり、同じ開発者の署名なので、Plain APK で最新に保てます。</string>
     <string name="listing_signed_differently">この端末にあるアプリは %1$s から入手したもので、%2$s にある開発者のリリースとは別の鍵で署名されています（Play 版ではよくあります）。そのため Android では互いにアップデートできません。</string>
-    <string name="switch_title">%1$s を %2$s 版に切り替えますか？</string>
+    <string name="switch_title">%1$s を %2$s から再インストールしますか？</string>
     <string name="switch_steps">Plain APK がまず %2$s 版をダウンロードして確認します。その後、Android が %1$s のアンインストールと新しい版のインストールを求めます。以降は自動でアップデートされます。</string>
     <string name="switch_warning">アンインストールすると、%1$s がこの端末に保存しているすべてのデータ（アカウント、設定、鍵、ダウンロード）が削除されます。大切なものがある場合は、続ける前に %1$s 内でバックアップまたはエクスポートしてください。</string>
     <string name="switch_confirm">アンインストールして再インストール</string>

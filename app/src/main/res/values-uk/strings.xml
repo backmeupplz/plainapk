@@ -49,7 +49,7 @@
     <string name="update_all">Оновити все</string>
     <string name="keep_updated">Оновлювати</string>
     <string name="keep_all_updated">Оновлювати все</string>
-    <string name="switch_button">Перейти…</string>
+    <string name="switch_button">Перевстановити…</string>
     <string name="open">Відкрити</string>
     <string name="cancel">Скасувати</string>
     <string name="updates_on">Оновлення з %s</string>
@@ -73,7 +73,7 @@
     <string name="listing_install">Plain APK установлює APK з останнього релізу на %s і стежить за оновленнями.</string>
     <string name="listing_can_update">Уже є на цьому телефоні й підписаний тим самим розробником, тож Plain APK може його оновлювати.</string>
     <string name="listing_signed_differently">Копія на цьому телефоні отримана з %1$s і підписана іншим ключем, ніж релізи розробника на %2$s (збірки з Play часто такі), тому Android не дозволяє одній оновлювати іншу.</string>
-    <string name="switch_title">Перейти з %1$s на версію з %2$s?</string>
+    <string name="switch_title">Перевстановити %1$s з %2$s?</string>
     <string name="switch_steps">Plain APK спочатку завантажить і перевірить версію з %2$s. Потім Android попросить видалити %1$s і встановити нову. Після цього вона оновлюватиметься сама.</string>
     <string name="switch_warning">Під час видалення стирається все, що %1$s зберігає на цьому телефоні: облікові записи, налаштування, ключі та завантаження. Якщо щось із цього важливе, зробіть копію або експортуйте це в %1$s, перш ніж продовжити.</string>
     <string name="switch_confirm">Видалити й установити знову</string>

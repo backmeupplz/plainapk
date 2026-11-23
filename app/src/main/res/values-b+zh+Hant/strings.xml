@@ -40,7 +40,7 @@
     <string name="update_all">全部更新</string>
     <string name="keep_updated">保持更新</string>
     <string name="keep_all_updated">全部保持更新</string>
-    <string name="switch_button">切換…</string>
+    <string name="switch_button">重新安裝…</string>
     <string name="open">開啟</string>
     <string name="cancel">取消</string>
     <string name="updates_on">更新來源：%s</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK 會從 %s 上的最新發行版本安裝 APK，並保持更新。</string>
     <string name="listing_can_update">這支手機上已有此應用程式，且由同一位開發者簽署，因此 Plain APK 可以讓它保持更新。</string>
     <string name="listing_signed_differently">這支手機上的副本來自 %1$s，其簽署金鑰與開發者在 %2$s 上的發行版本不同（Play 版本通常如此），所以 Android 不允許其中一個更新另一個。</string>
-    <string name="switch_title">將 %1$s 切換到 %2$s 的版本？</string>
+    <string name="switch_title">從 %2$s 重新安裝 %1$s？</string>
     <string name="switch_steps">Plain APK 會先下載並檢查 %2$s 的版本。接著 Android 會要求你解除安裝 %1$s 並安裝新版本。此後它會自動更新。</string>
     <string name="switch_warning">解除安裝會刪除 %1$s 在這支手機上儲存的所有內容：帳號、設定、金鑰和下載檔案。如果其中有重要內容，請在繼續之前先在 %1$s 中備份或匯出。</string>
     <string name="switch_confirm">解除安裝並重新安裝</string>

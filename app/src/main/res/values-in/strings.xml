@@ -40,7 +40,7 @@
     <string name="update_all">Perbarui semua</string>
     <string name="keep_updated">Jaga tetap terbaru</string>
     <string name="keep_all_updated">Jaga semua tetap terbaru</string>
-    <string name="switch_button">Alihkan…</string>
+    <string name="switch_button">Pasang ulang…</string>
     <string name="open">Buka</string>
     <string name="cancel">Batal</string>
     <string name="updates_on">Pembaruan dari %s</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK memasang APK dari rilis terbaru di %s dan menjaganya tetap diperbarui.</string>
     <string name="listing_can_update">Sudah ada di ponsel ini dan ditandatangani pengembang yang sama, jadi Plain APK bisa menjaganya tetap terbaru.</string>
     <string name="listing_signed_differently">Salinan di ponsel ini berasal dari %1$s dan ditandatangani dengan kunci yang berbeda dari rilis pengembang di %2$s (build Play sering begitu), jadi Android tidak mengizinkan yang satu memperbarui yang lain.</string>
-    <string name="switch_title">Alihkan %1$s ke %2$s?</string>
+    <string name="switch_title">Pasang ulang %1$s dari %2$s?</string>
     <string name="switch_steps">Plain APK mengunduh dan memeriksa versi dari %2$s terlebih dahulu. Lalu Android meminta kamu mencopot %1$s dan memasang yang baru. Setelah itu aplikasi akan diperbarui sendiri.</string>
     <string name="switch_warning">Mencopot akan menghapus semua yang disimpan %1$s di ponsel ini: akun, pengaturan, kunci, dan unduhan. Jika ada yang penting, cadangkan atau ekspor di dalam %1$s sebelum melanjutkan.</string>
     <string name="switch_confirm">Copot dan pasang ulang</string>

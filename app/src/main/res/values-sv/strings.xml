@@ -43,7 +43,7 @@
     <string name="update_all">Uppdatera alla</string>
     <string name="keep_updated">Håll uppdaterad</string>
     <string name="keep_all_updated">Håll alla uppdaterade</string>
-    <string name="switch_button">Byt…</string>
+    <string name="switch_button">Installera om…</string>
     <string name="open">Öppna</string>
     <string name="cancel">Avbryt</string>
     <string name="updates_on">Uppdateras via %s</string>
@@ -67,7 +67,7 @@
     <string name="listing_install">Plain APK installerar APK-filen från den senaste utgåvan på %s och håller den uppdaterad.</string>
     <string name="listing_can_update">Finns redan på den här telefonen och är signerad av samma utvecklare, så Plain APK kan hålla den uppdaterad.</string>
     <string name="listing_signed_differently">Kopian på den här telefonen kommer från %1$s och är signerad med en annan nyckel än utvecklarens utgåvor på %2$s (vilket ofta gäller Play-versioner), så Android låter inte den ena uppdatera den andra.</string>
-    <string name="switch_title">Byta %1$s till %2$s?</string>
+    <string name="switch_title">Installera om %1$s från %2$s?</string>
     <string name="switch_steps">Plain APK laddar först ner och kontrollerar versionen från %2$s. Sedan ber Android dig avinstallera %1$s och installera den nya. Därefter uppdateras den av sig själv.</string>
     <string name="switch_warning">Avinstallation raderar allt som %1$s sparar på den här telefonen: konton, inställningar, nycklar och nedladdningar. Om något av det är viktigt, säkerhetskopiera eller exportera det i %1$s innan du fortsätter.</string>
     <string name="switch_confirm">Avinstallera och installera om</string>

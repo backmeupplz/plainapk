@@ -43,7 +43,7 @@
     <string name="update_all">Alles bijwerken</string>
     <string name="keep_updated">Up-to-date houden</string>
     <string name="keep_all_updated">Alles up-to-date houden</string>
-    <string name="switch_button">Overstappen…</string>
+    <string name="switch_button">Opnieuw installeren…</string>
     <string name="open">Openen</string>
     <string name="cancel">Annuleren</string>
     <string name="updates_on">Updates via %s</string>
@@ -67,7 +67,7 @@
     <string name="listing_install">Plain APK installeert de APK uit de nieuwste release op %s en houdt hem up-to-date.</string>
     <string name="listing_can_update">Staat al op deze telefoon en is door dezelfde ontwikkelaar ondertekend, dus Plain APK kan hem up-to-date houden.</string>
     <string name="listing_signed_differently">De versie op deze telefoon komt van %1$s en is ondertekend met een andere sleutel dan de releases van de ontwikkelaar op %2$s (bij Play-versies is dat vaak zo), dus Android laat de ene niet de andere bijwerken.</string>
-    <string name="switch_title">%1$s overzetten naar %2$s?</string>
+    <string name="switch_title">%1$s opnieuw installeren vanaf %2$s?</string>
     <string name="switch_steps">Plain APK downloadt en controleert eerst de versie van %2$s. Daarna vraagt Android je om %1$s te verwijderen en de nieuwe te installeren. Vanaf dan werkt hij zichzelf bij.</string>
     <string name="switch_warning">Verwijderen wist alles wat %1$s op deze telefoon bewaart: accounts, instellingen, sleutels en downloads. Is daar iets belangrijks bij, maak dan een back-up of exporteer het in %1$s voordat je doorgaat.</string>
     <string name="switch_confirm">Verwijderen en opnieuw installeren</string>

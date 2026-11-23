@@ -46,7 +46,7 @@
     <string name="update_all">Actualizar todo</string>
     <string name="keep_updated">Mantener al día</string>
     <string name="keep_all_updated">Mantener todo al día</string>
-    <string name="switch_button">Cambiar…</string>
+    <string name="switch_button">Reinstalar…</string>
     <string name="open">Abrir</string>
     <string name="cancel">Cancelar</string>
     <string name="updates_on">Se actualiza desde %s</string>
@@ -70,7 +70,7 @@
     <string name="listing_install">Plain APK instala el APK de la última versión en %s y lo mantiene actualizado.</string>
     <string name="listing_can_update">Ya está en este teléfono y firmada por el mismo desarrollador, así que Plain APK puede mantenerla actualizada.</string>
     <string name="listing_signed_differently">La copia de este teléfono viene de %1$s y está firmada con una clave distinta a la de las versiones del desarrollador en %2$s (suele pasar con las de Play), por lo que Android no permite que una actualice a la otra.</string>
-    <string name="switch_title">¿Cambiar %1$s a la versión de %2$s?</string>
+    <string name="switch_title">¿Reinstalar %1$s desde %2$s?</string>
     <string name="switch_steps">Plain APK descarga y comprueba primero la versión de %2$s. Después Android te pedirá que desinstales %1$s y que instales la nueva. A partir de ahí se actualiza sola.</string>
     <string name="switch_warning">Al desinstalar se borra todo lo que %1$s guarda en este teléfono: cuentas, ajustes, claves y descargas. Si algo de eso te importa, haz una copia o expórtalo desde %1$s antes de continuar.</string>
     <string name="switch_confirm">Desinstalar y reinstalar</string>

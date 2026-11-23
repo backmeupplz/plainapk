@@ -40,7 +40,7 @@
     <string name="update_all">全部更新</string>
     <string name="keep_updated">保持更新</string>
     <string name="keep_all_updated">全部保持更新</string>
-    <string name="switch_button">切换…</string>
+    <string name="switch_button">重新安装…</string>
     <string name="open">打开</string>
     <string name="cancel">取消</string>
     <string name="updates_on">更新来源：%s</string>
@@ -64,7 +64,7 @@
     <string name="listing_install">Plain APK 会从 %s 上的最新发布版本安装 APK，并保持更新。</string>
     <string name="listing_can_update">这部手机上已有此应用，且由同一开发者签名，因此 Plain APK 可以让它保持更新。</string>
     <string name="listing_signed_differently">这部手机上的副本来自 %1$s，其签名密钥与开发者在 %2$s 上的发布版本不同（Play 版本通常如此），所以 Android 不允许其中一个更新另一个。</string>
-    <string name="switch_title">将 %1$s 切换到 %2$s 的版本？</string>
+    <string name="switch_title">从 %2$s 重新安装 %1$s？</string>
     <string name="switch_steps">Plain APK 会先下载并检查 %2$s 的版本。然后 Android 会要求你卸载 %1$s 并安装新版本。此后它会自动更新。</string>
     <string name="switch_warning">卸载会删除 %1$s 在这部手机上保存的所有内容：账号、设置、密钥和下载文件。如果其中有重要内容，请在继续之前先在 %1$s 中备份或导出。</string>
     <string name="switch_confirm">卸载并重新安装</string>
