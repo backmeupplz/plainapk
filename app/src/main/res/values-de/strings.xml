@@ -14,8 +14,6 @@
     <string name="banner_install_text">Android fragt nur einmal. Ohne diese Erlaubnis lässt sich nichts installieren oder aktualisieren.</string>
     <string name="banner_notifications_title">Benachrichtigungen aktivieren</string>
     <string name="banner_notifications_text">Nur für das seltene Update, das Android von dir bestätigt haben möchte. Alles andere läuft im Hintergrund.</string>
-    <string name="banner_battery_title">Stündlich prüfen</string>
-    <string name="banner_battery_text">Android lässt selten geöffnete Apps nur etwa einmal am Tag laufen. Erlaube Plain APK, im Hintergrund zu laufen, damit Updates innerhalb einer Stunde ankommen.</string>
     <string name="allow">Erlauben</string>
     <string name="turn_on">Aktivieren</string>
     <string name="not_now">Nicht jetzt</string>

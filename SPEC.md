@@ -8,7 +8,7 @@ A small native Android app store that installs and silently updates apps from th
 - No account, analytics, crash reporting, Google Play services or third-party SDKs.
 - Native Kotlin with no libraries (framework Views, JobScheduler, HttpURLConnection, org.json), as small and fast as possible. minSdk 31 (Android 12), because older versions can't update silently.
 - Works the same on GrapheneOS and other de-Googled phones.
-- Handles projects that publish a release every hour.
+- Handles projects that publish a release every hour (it always installs the newest one).
 - Updates itself.
 
 ## Catalogue
@@ -23,7 +23,7 @@ A small native Android app store that installs and silently updates apps from th
 - **GitHub:** read the `Location` of `https://github.com/O/R/releases/latest` (newest full release; `releases.atom` when pre-releases are on). That is the website, not the API, so the 60/h unauthenticated API limit doesn't apply. When the tag is new, read the asset links from `https://github.com/O/R/releases/expanded_assets/<tag>`; only links under the repo's own `/releases/download/` count.
 - **Forgejo:** `/O/R/releases.rss` or the API.
 - **GitLab:** the API (500 requests a minute unauthenticated).
-- A persisted JobScheduler job every hour on any network. Android may defer it for apps in a low standby bucket; check `am get-standby-bucket com.plainapk` on real phones.
+- A persisted JobScheduler job once a day on any network (Android runs even rarely opened apps' jobs about daily, so no battery-optimisation exemption is needed); the refresh button checks right away.
 
 ## Choosing the asset
 
@@ -46,7 +46,7 @@ Using `QUERY_ALL_PACKAGES`, match installed apps against the catalogue by packag
 
 - Whether Play keeps update ownership on Android 14+, which would mean a prompt on every update.
 - Whether Android throttles silent updates per app, and by how much.
-- An hourly-release test app updating silently on GrapheneOS.
+- A frequently released test app updating silently on GrapheneOS.
 
 ## Risk
 

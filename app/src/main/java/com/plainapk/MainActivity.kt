@@ -195,14 +195,6 @@ class MainActivity : Activity() {
             out += Banner(s(R.string.banner_notifications_title), s(R.string.banner_notifications_text), s(R.string.turn_on)) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
             }
-        // Android puts apps you rarely open to sleep and then runs their background work about once a day
-        else if (!getSystemService(android.os.PowerManager::class.java).isIgnoringBatteryOptimizations(packageName) &&
-            !getSharedPreferences("p", 0).getBoolean("batteryAsked", false)) out += Banner(s(R.string.banner_battery_title), s(R.string.banner_battery_text),
-            s(R.string.allow), { getSharedPreferences("p", 0).edit().putBoolean("batteryAsked", true).apply(); render() }) {
-            @android.annotation.SuppressLint("BatteryLife") // an updater that must run hourly is the case this exemption exists for
-            val i = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
-            runCatching { startActivity(i) }
-        }
 
         if (url != null && store.find(url) == null && store.catalogue.none { it.repo.equals(url, true) }) {
             out += Header(s(R.string.add_from, Forge.host(url)))

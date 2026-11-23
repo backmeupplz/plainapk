@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android 只会询问一次。不允许的话，就无法安装或更新任何应用。</string>
     <string name="banner_notifications_title">开启通知</string>
     <string name="banner_notifications_text">仅用于 Android 要求你确认的少数更新，其余一切都在后台安静完成。</string>
-    <string name="banner_battery_title">每小时检查一次</string>
-    <string name="banner_battery_text">Android 只允许你很少打开的应用每天大约运行一次。请允许 Plain APK 在后台运行，这样更新能在一小时内送达。</string>
     <string name="allow">允许</string>
     <string name="turn_on">开启</string>
     <string name="not_now">以后再说</string>

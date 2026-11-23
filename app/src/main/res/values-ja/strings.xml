@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android が確認するのは一度だけです。許可しないと、インストールもアップデートもできません。</string>
     <string name="banner_notifications_title">通知をオンにする</string>
     <string name="banner_notifications_text">Android が確認を求める、まれなアップデートの場合だけ使います。ほかはすべてバックグラウンドで静かに行われます。</string>
-    <string name="banner_battery_title">1 時間ごとに確認</string>
-    <string name="banner_battery_text">あまり開かないアプリは、Android により 1 日に 1 回ほどしか実行できません。1 時間以内にアップデートを受け取れるよう、Plain APK のバックグラウンド実行を許可してください。</string>
     <string name="allow">許可</string>
     <string name="turn_on">オンにする</string>
     <string name="not_now">あとで</string>

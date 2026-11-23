@@ -21,8 +21,6 @@
     <string name="banner_install_text">Android asks once. Without it nothing can be installed or updated.</string>
     <string name="banner_notifications_title">Turn on notifications</string>
     <string name="banner_notifications_text">Only for the rare update Android wants you to confirm. Everything else happens quietly.</string>
-    <string name="banner_battery_title">Check every hour</string>
-    <string name="banner_battery_text">Android lets apps you rarely open run only about once a day. Allow Plain APK to run in the background so updates arrive within the hour.</string>
     <string name="allow">Allow</string>
     <string name="turn_on">Turn on</string>
     <string name="not_now">Not now</string>

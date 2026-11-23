@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android 只會詢問一次。不允許的話，就無法安裝或更新任何應用程式。</string>
     <string name="banner_notifications_title">開啟通知</string>
     <string name="banner_notifications_text">僅用於 Android 要求你確認的少數更新，其餘一切都在背景安靜完成。</string>
-    <string name="banner_battery_title">每小時檢查一次</string>
-    <string name="banner_battery_text">Android 只允許你很少開啟的應用程式每天大約執行一次。請允許 Plain APK 在背景執行，這樣更新能在一小時內送達。</string>
     <string name="allow">允許</string>
     <string name="turn_on">開啟</string>
     <string name="not_now">稍後再說</string>

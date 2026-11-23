@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android จะถามเพียงครั้งเดียว หากไม่อนุญาต จะติดตั้งหรืออัปเดตอะไรไม่ได้เลย</string>
     <string name="banner_notifications_title">เปิดการแจ้งเตือน</string>
     <string name="banner_notifications_text">ใช้เฉพาะการอัปเดตที่หาได้ยากซึ่ง Android ต้องให้คุณยืนยัน ส่วนที่เหลือทำงานเงียบ ๆ</string>
-    <string name="banner_battery_title">ตรวจทุกชั่วโมง</string>
-    <string name="banner_battery_text">Android ให้แอปที่คุณแทบไม่เปิดทำงานได้แค่วันละครั้งโดยประมาณ อนุญาตให้ Plain APK ทำงานเบื้องหลังเพื่อให้การอัปเดตมาถึงภายในหนึ่งชั่วโมง</string>
     <string name="allow">อนุญาต</string>
     <string name="turn_on">เปิด</string>
     <string name="not_now">ไว้ทีหลัง</string>

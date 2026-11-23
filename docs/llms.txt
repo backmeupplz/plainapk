@@ -1,6 +1,6 @@
 # Publishing an Android app for Plain APK
 
-Plain APK (https://plainapk.com) installs Android apps straight from the releases of their GitHub, Forgejo (Codeberg or self-hosted) or GitLab repository and updates them in the background, hourly if you release hourly. There is no store account, no review queue and no server: if your releases carry an APK, people can already install your app by pasting your repository link into Plain APK.
+Plain APK (https://plainapk.com) installs Android apps straight from the releases of their GitHub, Forgejo (Codeberg or self-hosted) or GitLab repository and updates them in the background once a day, always to the newest release, so even hourly builds are fine. There is no store account, no review queue and no server: if your releases carry an APK, people can already install your app by pasting your repository link into Plain APK.
 
 This page is written so that a person or an AI coding agent can follow it as-is. It is also served at https://plainapk.com/llms.txt.
 
@@ -108,4 +108,4 @@ If your Gradle build already signs release builds, drop the `apksigner` lines an
 
 - `https://github.com/you/yourapp/releases/latest` should show the new release with the `.apk` attached.
 - `apksigner verify --print-certs yourapp.apk` should print the same certificate SHA-256 for every build.
-- Paste the repository link into Plain APK's search field and tap Add: it installs the APK, and every later release arrives on its own within the hour.
+- Paste the repository link into Plain APK's search field and tap Add: it installs the APK, and later releases arrive on their own within a day (or right away with the refresh button).

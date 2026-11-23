@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android hanya bertanya sekali. Tanpa izin ini, tidak ada yang bisa dipasang atau diperbarui.</string>
     <string name="banner_notifications_title">Aktifkan notifikasi</string>
     <string name="banner_notifications_text">Hanya untuk pembaruan langka yang perlu kamu konfirmasi di Android. Selebihnya berjalan tanpa suara.</string>
-    <string name="banner_battery_title">Periksa setiap jam</string>
-    <string name="banner_battery_text">Android hanya mengizinkan aplikasi yang jarang dibuka berjalan sekitar sekali sehari. Izinkan Plain APK berjalan di latar belakang agar pembaruan tiba dalam satu jam.</string>
     <string name="allow">Izinkan</string>
     <string name="turn_on">Aktifkan</string>
     <string name="not_now">Nanti saja</string>

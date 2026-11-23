@@ -18,8 +18,6 @@
     <string name="banner_install_text">يسأل Android مرة واحدة فقط. بدون ذلك لا يمكن تثبيت أو تحديث أي شيء.</string>
     <string name="banner_notifications_title">فعِّل الإشعارات</string>
     <string name="banner_notifications_text">فقط للتحديث النادر الذي يطلب Android تأكيده. وكل شيء آخر يحدث بهدوء.</string>
-    <string name="banner_battery_title">التحقق كل ساعة</string>
-    <string name="banner_battery_text">يسمح Android للتطبيقات التي نادرًا ما تفتحها بالعمل مرة واحدة تقريبًا في اليوم. اسمح لـ Plain APK بالعمل في الخلفية لتصلك التحديثات خلال ساعة.</string>
     <string name="allow">سماح</string>
     <string name="turn_on">تفعيل</string>
     <string name="not_now">ليس الآن</string>

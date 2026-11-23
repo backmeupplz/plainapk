@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android chỉ hỏi một lần. Không có quyền này thì không thể cài đặt hay cập nhật gì cả.</string>
     <string name="banner_notifications_title">Bật thông báo</string>
     <string name="banner_notifications_text">Chỉ dành cho những bản cập nhật hiếm hoi mà Android muốn bạn xác nhận. Mọi thứ khác diễn ra âm thầm.</string>
-    <string name="banner_battery_title">Kiểm tra mỗi giờ</string>
-    <string name="banner_battery_text">Android chỉ cho các ứng dụng ít khi mở chạy khoảng một lần mỗi ngày. Hãy cho phép Plain APK chạy nền để bản cập nhật đến trong vòng một giờ.</string>
     <string name="allow">Cho phép</string>
     <string name="turn_on">Bật</string>
     <string name="not_now">Để sau</string>

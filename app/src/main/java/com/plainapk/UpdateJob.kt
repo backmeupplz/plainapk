@@ -7,7 +7,7 @@ import android.app.job.JobService
 import android.content.ComponentName
 import android.content.Context
 
-/** The hourly background check: finds new releases and installs them. */
+/** The daily background check: finds new releases and installs them. "Check now" in the app covers anything sooner. */
 class UpdateJob : JobService() {
     override fun onStartJob(p: JobParameters): Boolean {
         Work.init(this)
@@ -24,11 +24,14 @@ class UpdateJob : JobService() {
     }
 
     companion object {
+        private const val INTERVAL = 24 * 3600_000L
+
         fun schedule(c: Context) {
             val js = c.getSystemService(JobScheduler::class.java)
-            if (js.getPendingJob(1) != null) return
+            // Already scheduled at this interval; an older install's hourly job gets replaced
+            if (js.getPendingJob(1)?.intervalMillis == INTERVAL) return
             js.schedule(JobInfo.Builder(1, ComponentName(c, UpdateJob::class.java))
-                .setPeriodic(3600_000L)
+                .setPeriodic(INTERVAL)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
                 .build())

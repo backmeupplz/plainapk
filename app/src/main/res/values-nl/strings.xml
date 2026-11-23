@@ -14,8 +14,6 @@
     <string name="banner_install_text">Android vraagt dit één keer. Zonder deze toestemming kan er niets worden geïnstalleerd of bijgewerkt.</string>
     <string name="banner_notifications_title">Meldingen aanzetten</string>
     <string name="banner_notifications_text">Alleen voor die zeldzame update die Android door jou bevestigd wil hebben. Al het andere gebeurt stilletjes.</string>
-    <string name="banner_battery_title">Elk uur controleren</string>
-    <string name="banner_battery_text">Android laat apps die je zelden opent maar ongeveer één keer per dag draaien. Sta toe dat Plain APK op de achtergrond draait, zodat updates binnen het uur binnenkomen.</string>
     <string name="allow">Toestaan</string>
     <string name="turn_on">Aanzetten</string>
     <string name="not_now">Niet nu</string>

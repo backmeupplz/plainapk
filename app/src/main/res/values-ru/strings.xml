@@ -16,8 +16,6 @@
     <string name="banner_install_text">Android спросит один раз. Без этого ничего нельзя ни установить, ни обновить.</string>
     <string name="banner_notifications_title">Включите уведомления</string>
     <string name="banner_notifications_text">Только для редкого обновления, которое Android просит подтвердить. Всё остальное происходит тихо.</string>
-    <string name="banner_battery_title">Проверять каждый час</string>
-    <string name="banner_battery_text">Android разрешает редко открываемым приложениям работать примерно раз в сутки. Разрешите Plain APK работать в фоне, чтобы обновления приходили в течение часа.</string>
     <string name="allow">Разрешить</string>
     <string name="turn_on">Включить</string>
     <string name="not_now">Не сейчас</string>

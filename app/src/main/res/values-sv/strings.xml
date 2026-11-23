@@ -14,8 +14,6 @@
     <string name="banner_install_text">Android frågar bara en gång. Utan det går inget att installera eller uppdatera.</string>
     <string name="banner_notifications_title">Slå på aviseringar</string>
     <string name="banner_notifications_text">Bara för den sällsynta uppdatering som Android vill att du bekräftar. Allt annat sker i tysthet.</string>
-    <string name="banner_battery_title">Kontrollera varje timme</string>
-    <string name="banner_battery_text">Android låter appar du sällan öppnar köra ungefär en gång per dygn. Tillåt Plain APK att köra i bakgrunden så kommer uppdateringarna inom en timme.</string>
     <string name="allow">Tillåt</string>
     <string name="turn_on">Slå på</string>
     <string name="not_now">Inte nu</string>

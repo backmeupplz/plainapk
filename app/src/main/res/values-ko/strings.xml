@@ -13,8 +13,6 @@
     <string name="banner_install_text">Android는 한 번만 묻습니다. 허용하지 않으면 아무것도 설치하거나 업데이트할 수 없습니다.</string>
     <string name="banner_notifications_title">알림 켜기</string>
     <string name="banner_notifications_text">Android가 확인을 요구하는 드문 업데이트에만 사용합니다. 나머지는 모두 조용히 처리됩니다.</string>
-    <string name="banner_battery_title">1시간마다 확인</string>
-    <string name="banner_battery_text">Android는 자주 열지 않는 앱을 하루에 한 번 정도만 실행하게 합니다. 업데이트가 1시간 안에 도착하도록 Plain APK의 백그라운드 실행을 허용하세요.</string>
     <string name="allow">허용</string>
     <string name="turn_on">켜기</string>
     <string name="not_now">나중에</string>

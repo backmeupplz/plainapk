@@ -15,8 +15,6 @@
     <string name="banner_install_text">O Android pergunta só uma vez. Sem isso, nada pode ser instalado ou atualizado.</string>
     <string name="banner_notifications_title">Ativar notificações</string>
     <string name="banner_notifications_text">Só para a rara atualização que o Android quer que você confirme. Todo o resto acontece em silêncio.</string>
-    <string name="banner_battery_title">Verificar a cada hora</string>
-    <string name="banner_battery_text">O Android deixa apps que você raramente abre rodarem só cerca de uma vez por dia. Permita que o Plain APK rode em segundo plano para receber as atualizações em até uma hora.</string>
     <string name="allow">Permitir</string>
     <string name="turn_on">Ativar</string>
     <string name="not_now">Agora não</string>

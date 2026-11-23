@@ -14,8 +14,6 @@
     <string name="banner_install_text">Android yalnızca bir kez sorar. Bu izin olmadan hiçbir şey yüklenemez veya güncellenemez.</string>
     <string name="banner_notifications_title">Bildirimleri aç</string>
     <string name="banner_notifications_text">Yalnızca Android\'in onaylamanı istediği nadir güncellemeler için. Geri kalan her şey sessizce olur.</string>
-    <string name="banner_battery_title">Her saat denetle</string>
-    <string name="banner_battery_text">Android, nadiren açtığın uygulamaların günde yalnızca bir kez çalışmasına izin verir. Güncellemelerin bir saat içinde gelmesi için Plain APK\'in arka planda çalışmasına izin ver.</string>
     <string name="allow">İzin ver</string>
     <string name="turn_on">Aç</string>
     <string name="not_now">Şimdi değil</string>

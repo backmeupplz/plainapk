@@ -14,8 +14,6 @@
     <string name="banner_install_text">Android सिर्फ़ एक बार पूछता है। इसके बिना कुछ भी इंस्टॉल या अपडेट नहीं हो सकता।</string>
     <string name="banner_notifications_title">सूचनाएँ चालू करें</string>
     <string name="banner_notifications_text">सिर्फ़ उस कभी-कभार के अपडेट के लिए जिसकी पुष्टि Android आपसे चाहता है। बाकी सब चुपचाप होता है।</string>
-    <string name="banner_battery_title">हर घंटे जाँचें</string>
-    <string name="banner_battery_text">Android कम खुलने वाले ऐप्स को दिन में करीब एक ही बार चलने देता है। Plain APK को बैकग्राउंड में चलने दें, ताकि अपडेट एक घंटे के भीतर पहुँचें।</string>
     <string name="allow">अनुमति दें</string>
     <string name="turn_on">चालू करें</string>
     <string name="not_now">अभी नहीं</string>

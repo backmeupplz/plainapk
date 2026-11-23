@@ -15,8 +15,6 @@
     <string name="banner_install_text">Android lo pide una sola vez. Sin este permiso no se puede instalar ni actualizar nada.</string>
     <string name="banner_notifications_title">Activa las notificaciones</string>
     <string name="banner_notifications_text">Solo para esa actualización ocasional que Android quiere que confirmes. Todo lo demás ocurre en silencio.</string>
-    <string name="banner_battery_title">Comprobar cada hora</string>
-    <string name="banner_battery_text">Android deja que las apps que casi nunca abres se ejecuten solo una vez al día. Permite que Plain APK se ejecute en segundo plano para recibir las actualizaciones en menos de una hora.</string>
     <string name="allow">Permitir</string>
     <string name="turn_on">Activar</string>
     <string name="not_now">Ahora no</string>
