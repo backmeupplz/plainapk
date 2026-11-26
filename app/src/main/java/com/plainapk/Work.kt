@@ -118,7 +118,7 @@ object Work {
             t.error = null
             // Already running this release (installed elsewhere, or before we tracked it): nothing to download
             if (t.handledTag == null && installed(t.pkg)?.versionName?.removePrefix("v") == rel.tag.removePrefix("v")) t.handledTag = rel.tag
-            if (install && t.handledTag != rel.tag && (force || t.pendingTag != rel.tag)) update(t, rel)
+            if (install && (t.handledTag != rel.tag || t.pkg == null) && (force || t.pendingTag != rel.tag)) update(t, rel)
         } catch (e: Exception) {
             t.error = e.message ?: e.javaClass.simpleName
         } finally {
@@ -146,6 +146,9 @@ object Work {
             if (apkCerts.isEmpty()) return reject(t, rel, s(R.string.not_signed, asset.name))
             if (t.pkg != null && apk.packageName != t.pkg) return reject(t, rel, s(R.string.wrong_package, asset.name, apk.packageName, t.pkg!!))
             t.signer?.let { if (it !in apkCerts) return reject(t, rel, s(R.string.different_key)) }
+            // Before the early returns below: an app added by URL that's already on the phone still needs its package for the list
+            t.pkg = apk.packageName
+            if (t.name == null) t.name = apk.applicationInfo?.let { ai -> ai.sourceDir = file.path; ai.publicSourceDir = file.path; ctx.packageManager.getApplicationLabel(ai).toString() }
             val have = installed(apk.packageName)
             if (have != null) {
                 if (certs(have.signingInfo).intersect(apkCerts).isEmpty()) {
@@ -154,8 +157,6 @@ object Work {
                 }
                 if (apk.longVersionCode <= have.longVersionCode) { t.handledTag = rel.tag; return } // nothing newer
             }
-            t.pkg = apk.packageName
-            if (t.name == null) t.name = apk.applicationInfo?.let { ai -> ai.sourceDir = file.path; ai.publicSourceDir = file.path; ctx.packageManager.getApplicationLabel(ai).toString() }
             busy[t.repo] = s(R.string.installing, rel.tag); changed()
             install(t, rel.tag, apk.longVersionCode, file, gentle = !foreground)
         } finally {
